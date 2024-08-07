@@ -1,0 +1,71 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Nicol\\Escritorio\\Cursos y proyectos\\Curso Ecommerce Blazor\\Ecommerce\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{EC2E19E3-3EA1-4F01-B9F0-7AF7BA5B4222}|Ecommerce.API\\Ecommerce.API.csproj|c:\\users\\nicol\\escritorio\\cursos y proyectos\\curso ecommerce blazor\\ecommerce\\ecommerce.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EC2E19E3-3EA1-4F01-B9F0-7AF7BA5B4222}|Ecommerce.API\\Ecommerce.API.csproj|solutionrelative:ecommerce.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{85429537-18B7-44D4-B420-5015DDBE874F}|Ecommerce.Repositorio\\Ecommerce.Repositorio.csproj|c:\\users\\nicol\\escritorio\\cursos y proyectos\\curso ecommerce blazor\\ecommerce\\ecommerce.repositorio\\implementacion\\ventarepositorio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{85429537-18B7-44D4-B420-5015DDBE874F}|Ecommerce.Repositorio\\Ecommerce.Repositorio.csproj|solutionrelative:ecommerce.repositorio\\implementacion\\ventarepositorio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{85429537-18B7-44D4-B420-5015DDBE874F}|Ecommerce.Repositorio\\Ecommerce.Repositorio.csproj|c:\\users\\nicol\\escritorio\\cursos y proyectos\\curso ecommerce blazor\\ecommerce\\ecommerce.repositorio\\implementacion\\genericorepositorio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{85429537-18B7-44D4-B420-5015DDBE874F}|Ecommerce.Repositorio\\Ecommerce.Repositorio.csproj|solutionrelative:ecommerce.repositorio\\implementacion\\genericorepositorio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\Nicol\\Escritorio\\Cursos y proyectos\\Curso Ecommerce Blazor\\Ecommerce\\Ecommerce.API\\Program.cs",
+              "RelativeDocumentMoniker": "Ecommerce.API\\Program.cs",
+              "ToolTip": "C:\\Users\\Nicol\\Escritorio\\Cursos y proyectos\\Curso Ecommerce Blazor\\Ecommerce\\Ecommerce.API\\Program.cs",
+              "RelativeToolTip": "Ecommerce.API\\Program.cs",
+              "ViewState": "AQIAAAMAAAAAAAAAAADwvxQAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-07T02:10:50.343Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "GenericoRepositorio.cs",
+              "DocumentMoniker": "C:\\Users\\Nicol\\Escritorio\\Cursos y proyectos\\Curso Ecommerce Blazor\\Ecommerce\\Ecommerce.Repositorio\\Implementacion\\GenericoRepositorio.cs",
+              "RelativeDocumentMoniker": "Ecommerce.Repositorio\\Implementacion\\GenericoRepositorio.cs",
+              "ToolTip": "C:\\Users\\Nicol\\Escritorio\\Cursos y proyectos\\Curso Ecommerce Blazor\\Ecommerce\\Ecommerce.Repositorio\\Implementacion\\GenericoRepositorio.cs",
+              "RelativeToolTip": "Ecommerce.Repositorio\\Implementacion\\GenericoRepositorio.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-07T02:02:36.334Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "VentaRepositorio.cs",
+              "DocumentMoniker": "C:\\Users\\Nicol\\Escritorio\\Cursos y proyectos\\Curso Ecommerce Blazor\\Ecommerce\\Ecommerce.Repositorio\\Implementacion\\VentaRepositorio.cs",
+              "RelativeDocumentMoniker": "Ecommerce.Repositorio\\Implementacion\\VentaRepositorio.cs",
+              "ToolTip": "C:\\Users\\Nicol\\Escritorio\\Cursos y proyectos\\Curso Ecommerce Blazor\\Ecommerce\\Ecommerce.Repositorio\\Implementacion\\VentaRepositorio.cs",
+              "RelativeToolTip": "Ecommerce.Repositorio\\Implementacion\\VentaRepositorio.cs",
+              "ViewState": "AQIAAA4AAAAAAAAAAAAQwC4AAAAlAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-07T02:02:27.649Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
