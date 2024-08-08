@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.DTO
 {
-    internal class ResponseDTO<T>
+    public class ResponseDTO<T>
     {
         public T? Resultado { get; set; }
         public bool EsCorrecto { get; set; }
