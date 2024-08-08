@@ -19,3 +19,4 @@ C:\Users\Nicol\Escritorio\Cursos y proyectos\Curso Ecommerce Blazor\Ecommerce\Ec
 C:\Users\Nicol\Escritorio\Cursos y proyectos\Curso Ecommerce Blazor\Ecommerce\Ecommerce.Servicio\bin\Debug\net7.0\Ecommerce.Utilidades.pdb
 C:\Users\Nicol\Escritorio\Cursos y proyectos\Curso Ecommerce Blazor\Ecommerce\Ecommerce.Servicio\obj\Debug\net7.0\Ecommerce.Servicio.csproj.AssemblyReference.cache
 C:\Users\Nicol\Escritorio\Cursos y proyectos\Curso Ecommerce Blazor\Ecommerce\Ecommerce.Servicio\obj\Debug\net7.0\Ecommerc.038EB47A.Up2Date
+C:\Users\Nicol\Escritorio\Cursos y proyectos\Curso Ecommerce Blazor\Ecommerce\Ecommerce.Servicio\obj\Debug\net7.0\Ecommerce.Servicio.sourcelink.json

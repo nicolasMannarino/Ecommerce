@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.DTO
 {
-    internal class DashboardDTO
+    public class DashboardDTO
     {
         public string? TotalIngresos { get; set; }
         public int TotalVentas { get; set; }

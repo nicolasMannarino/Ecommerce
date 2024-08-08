@@ -81,3 +81,4 @@ C:\Users\Nicol\Escritorio\Cursos y proyectos\Curso Ecommerce Blazor\Ecommerce\Ec
 C:\Users\Nicol\Escritorio\Cursos y proyectos\Curso Ecommerce Blazor\Ecommerce\Ecommerce.API\bin\Debug\net7.0\Ecommerce.Utilidades.pdb
 C:\Users\Nicol\Escritorio\Cursos y proyectos\Curso Ecommerce Blazor\Ecommerce\Ecommerce.API\bin\Debug\net7.0\AutoMapper.dll
 C:\Users\Nicol\Escritorio\Cursos y proyectos\Curso Ecommerce Blazor\Ecommerce\Ecommerce.API\bin\Debug\net7.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+C:\Users\Nicol\Escritorio\Cursos y proyectos\Curso Ecommerce Blazor\Ecommerce\Ecommerce.API\obj\Debug\net7.0\Ecommerce.API.sourcelink.json

@@ -1,0 +1,55 @@
+# Ignorar archivos generados por la compilación
+bin/
+obj/
+*.pdb
+
+# Ignorar archivos de configuración específicos del entorno
+*.user
+*.vscode
+.vs/
+
+# Ignorar archivos de configuración específicos de IDEs
+*.suo
+*.sln.cache
+*.sln.docstates
+
+# Ignorar archivos de respaldo
+*~
+
+# Ignorar archivos de caché y temporales
+*.cache
+*.tmp
+
+# Ignorar archivos de compilación específicos de Visual Studio
+*.csproj.user
+*.sln.ide
+
+# Ignorar archivos de configuración de usuario de Visual Studio
+*.suo
+*.user
+
+# Ignorar archivos de caché de ReSharper
+_ReSharper*/
+
+# Ignorar archivos de caché de Rider
+.idea/
+
+# Ignorar archivos de caché de Visual Studio Code
+.vscode/
+
+Ecommerce.API/obj/
+Ecommerce.API/bin/
+Ecommerce.DTO/obj/
+Ecommerce.DTO/bin/
+Ecommerce.Model/obj/
+Ecommerce.Model/bin/
+Ecommerce.Repositorio/obj/
+Ecommerce.Repositorio/bin/
+Ecommerce.Servicio/obj/
+Ecommerce.Servicio/bin/
+Ecommerce.Utilidades/obj/
+Ecommerce.Utilidades/bin/
+Ecommerce.WebAssembly/obj/
+Ecommerce.WebAssembly/bin/
+
+
