@@ -17,7 +17,7 @@ namespace Ecommerce.API.Controllers
         }
 
         [HttpGet("Lista/{buscar:alpha?}")]
-        public async Task<IActionResult> Lista(string rol, string buscar = "NA")
+        public async Task<IActionResult> Lista(string buscar = "NA")
         {
             var response = new ResponseDTO<List<CategoriaDTO>>();
             try
