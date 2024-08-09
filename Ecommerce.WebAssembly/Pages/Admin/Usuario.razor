@@ -1,8 +1,6 @@
 ﻿@page "/usuario"
 @page "/usuario/{Id:int}"
 
-@using Ecommerce.DTO
-@using Ecommerce.WebAssembly.Servicios.Contrato;
 @inject IUsuarioServicio usuarioServicio
 @inject IToastService toastService
 @inject NavigationManager _navServicio
@@ -96,7 +94,7 @@
             else
             {
                 respuesta = false;
-                mensaje = "No puedo editar";
+                mensaje = "No pudo editar";
             }
         }
         else
@@ -110,7 +108,7 @@
             else
             {
                 respuesta = false;
-                mensaje = "No puedo crear";
+                mensaje = "No pudo crear";
             }
         }
 
