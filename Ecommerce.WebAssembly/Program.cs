@@ -11,13 +11,14 @@ using Ecommerce.WebAssembly.Servicios.Implementacion;
 using CurrieTechnologies.Razor.SweetAlert2;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
+builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddBlazoredToast();
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:5041/api/") });
 
-builder.Services.AddBlazoredLocalStorage();
-builder.Services.AddBlazoredToast();
+
 
 builder.Services.AddScoped<IUsuarioServicio, UsuarioServicio>();
 builder.Services.AddScoped<ICategoriaServicio, CategoriaServicio>();
