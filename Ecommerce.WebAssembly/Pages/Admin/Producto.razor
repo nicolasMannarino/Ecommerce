@@ -31,7 +31,7 @@
 
             <div class="input-group mt-3">
                 <label class="input-group-text bg-light" for="inputGroupSelect01">Categoria</label>
-                <select class="form-select" value="@modelo.IdCategoria" onchange="CambiarCategoria">
+                <select class="form-select" value="@modelo.IdCategoria" @onchange="CambiarCategoria">
                     @foreach (var item in listaCategoria)
                     {
                         <option value="@item.IdCategoria">@item.Nombre</option>
@@ -110,9 +110,9 @@
         }
     }
 
-    void CambiarCategoria(ChangedEventArgs e)
+    void CambiarCategoria(ChangeEventArgs e)
     {
-        modelo.IdCategoria = Convert.ToInt32(e.NewValue.ToString());
+        modelo.IdCategoria = Convert.ToInt32(e.Value.ToString());
     }
 
     async Task OnFileChange(InputFileChangeEventArgs e)

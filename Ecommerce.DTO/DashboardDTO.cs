@@ -10,7 +10,7 @@ namespace Ecommerce.DTO
     {
         public string? TotalIngresos { get; set; }
         public int TotalVentas { get; set; }
-        public int TotalCliente { get; set; }
+        public int TotalClientes { get; set; }
         public int TotalProductos { get; set; }
     }
 }

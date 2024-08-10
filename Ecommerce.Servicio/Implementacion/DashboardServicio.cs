@@ -63,7 +63,7 @@ namespace Ecommerce.Servicio.Implementacion
                 {
                     TotalIngresos = Ingresos(),
                     TotalVentas = Ventas(),
-                    TotalCliente = Clientes(),
+                    TotalClientes = Clientes(),
                     TotalProductos = Productos(),
                 };
                 return dto;

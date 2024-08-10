@@ -4,6 +4,6 @@ namespace Ecommerce.WebAssembly.Servicios.Contrato
 {
     public interface IVentaServicio
     {
-        Task<ResponseDTO<VentaDTO>> Crear(VentaDTO modelo);
+        Task<ResponseDTO<VentaDTO>> Registrar(VentaDTO modelo);
     }
 }

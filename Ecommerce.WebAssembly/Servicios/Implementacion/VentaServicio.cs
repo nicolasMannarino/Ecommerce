@@ -12,7 +12,7 @@ namespace Ecommerce.WebAssembly.Servicios.Implementacion
             _httpClient = httpClient;
         }
 
-        public async Task<ResponseDTO<VentaDTO>> Crear(VentaDTO modelo)
+        public async Task<ResponseDTO<VentaDTO>> Registrar(VentaDTO modelo)
         {
             var response = await _httpClient.PostAsJsonAsync("Venta/Registrar", modelo);
             var result = await response.Content.ReadFromJsonAsync<ResponseDTO<VentaDTO>>();

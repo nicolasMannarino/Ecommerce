@@ -51,7 +51,15 @@ namespace Ecommerce.WebAssembly.Servicios.Implementacion
         public int CantidadProductos()
         {
             var carrito = _syncLocalStorageService.GetItem<List<CarritoDTO>>("carrito");
-            return carrito == null ? 0 : carrito.Count;
+            int total = 0;
+            if (carrito != null)
+            {
+                foreach(var item in carrito)
+                {
+                    total += item.Cantidad; 
+                }
+            }
+            return total;
         }
 
         public async Task<List<CarritoDTO>> DevolverCarrito()
