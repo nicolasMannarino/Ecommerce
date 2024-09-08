@@ -29,7 +29,7 @@ namespace Ecommerce.Servicio.Implementacion
                 var consulta = _modeloRepositorio.Consultar(p => p.Correo == modelo.Correo && p.Clave == modelo.Clave);
                 var fromDbModelo = await consulta.FirstOrDefaultAsync();
 
-                if (fromDbModelo == null)
+                if (fromDbModelo != null)
                     return _mapper.Map<SesionDTO>(fromDbModelo);
                 else
                     throw new TaskCanceledException("No se encontraron coincidencias");

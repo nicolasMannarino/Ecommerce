@@ -1,9 +1,17 @@
 ﻿@inject ICarritoServicio carritoServicio
-@implements IDisposable 
+@implements IDisposable
+
+@inject SweetAlertService Swal;
+@inject NavigationManager _navigationManager;
+@using Ecommerce.WebAssembly.Extensiones;
+@using Microsoft.AspNetCore.Components.Authorization;
+@using System.Security.Claims;
+@inject AuthenticationStateProvider autenticacionProvider;
+
 
 <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-light">
     <div class="container">
-        <a class="navbar-brand" runat="server" href="#">Ecommerce MANIES</a>
+        <a class="navbar-brand" runat="server" href="#">MANIES</a>
         <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Alternar navegación" aria-controls="navbarSupportedContent"
                 aria-expanded="false" aria-label="Toggle navigation" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
@@ -11,28 +19,41 @@
         <div class="@NavMenuCssClass navbar-collapse d-sm-inline-flex justify-content-between">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
 
-                <li class="nav-item" b-test><NavLink class="nav-link" href="dashboard"> Dashboard</NavLink></li>
-                <li class="nav-item"><NavLink class="nav-link" href="usuarios"> Usuarios</NavLink></li>
-                <li class="nav-item"><NavLink class="nav-link" href="categorias"> Categorias</NavLink></li>
-                <li class="nav-item"><NavLink class="nav-link" href="productos"> Productos</NavLink></li>
+                <AuthorizeView Roles="Administrador">
+                    <li class="nav-item" b-test><NavLink class="nav-link" href="dashboard"> Dashboard</NavLink></li>
+                    <li class="nav-item"><NavLink class="nav-link" href="usuarios"> Usuarios</NavLink></li>
+                    <li class="nav-item"><NavLink class="nav-link" href="categorias"> Categorias</NavLink></li>
+                    <li class="nav-item"><NavLink class="nav-link" href="productos"> Productos</NavLink></li>
+                </AuthorizeView>
 
                 <li class="nav-item"><NavLink class="nav-link" href="catalogo"> Tienda</NavLink></li>
             </ul>
 
+            <AuthorizeView>
+                <Authorized>
+                    <span class="navbar-text me-3">
+                        @context.User.Claims.Where(c => c.Type == ClaimTypes.Email).Select(c => c.Value).SingleOrDefault()
+                    </span>
+                </Authorized>
+            </AuthorizeView>
 
-            <span class="navbar-text me-3">
-                nicolas.mannarino@hotmail.com
-            </span>
 
-            <a class="btn btn-outline-dark ms-auto ms-md-0 me-3" href="/cart">
+            <a class="btn btn-outline-dark ms-auto ms-md-0 me-3" href="/cart" style="position: relative;">
+                <img src="Imagenes/Iconos/iconoCarrito.ico" alt="Icono Carrito" class="icono-carrito"
+                     style="width: 30px; height: 30px; margin-right: 5px; border-radius: 50%; background-color: white; padding: 10px;">
                 <i class="bi-cart-fill me-1"></i>
-                Cart
+                Carrito
                 <span class="badge bg-dark text-white ms-1 rounded-pill">@mostrarCantidadCarrito()</span>
             </a>
 
-            <button class="btn btn-outline-dark ms-auto ms-md-0 me-3" type="button">Salir</button>
-
-            <a class="btn btn-outline-dark ms-auto ms-md-0 me-3" href="/login">Iniciar sesion</a>
+            <AuthorizeView>
+                <Authorized>
+                    <button class="btn btn-outline-dark ms-auto ms-md-0 me-3" type="button" @onclick="CerrarSesion">Salir</button>
+                </Authorized>
+                <NotAuthorized>
+                    <a class="btn btn-outline-dark ms-auto ms-md-0 me-3" href="/login">Iniciar sesion</a>
+                </NotAuthorized>
+            </AuthorizeView>
 
         </div>
     </div>
@@ -61,5 +82,24 @@
     private int mostrarCantidadCarrito()
     {
         return carritoServicio.CantidadProductos();
+    }
+
+    private async Task CerrarSesion()
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Desea Salir?",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Si",
+                CancelButtonText = "No",
+            });
+
+        if (result.IsConfirmed)
+        {
+            var autenticacionExt = (AutenticacionExtension)autenticacionProvider;
+            await autenticacionExt.ActualizarEstadoAutenticacion(null);
+            _navigationManager.NavigateTo("/", true);
+        }
     }
 }

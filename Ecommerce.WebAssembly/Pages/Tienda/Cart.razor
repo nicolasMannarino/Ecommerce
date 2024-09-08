@@ -4,6 +4,8 @@
 @inject IToastService toastService
 @inject NavigationManager _navServicio
 
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 
 <div class="row mt-4">
 
@@ -119,7 +121,7 @@
                     <hr />
                     <div class="d-flex justify-content-between">
                         <div>Total a pagar:</div>
-                        <div>S/. @(lista.Sum(i => i.Total))</div>
+                        <div>$ @(lista.Sum(i => i.Total))</div>
                     </div>
                     <div class="mt-2">
                         <div class="d-grid gap-1">
@@ -128,14 +130,13 @@
                     </div>
                 </EditForm>
 
-                @* COMENTAR TODO ESTO*@
-              @*   <AuthorizeView>
+                <AuthorizeView>
                     <NotAuthorized>
                         <div class="alert alert-danger mt-2" role="alert">
                             Debe iniciar sesion para poder realizar la compra
                         </div>
                     </NotAuthorized>
-                </AuthorizeView> *@
+                </AuthorizeView>
 
 
             </div>
@@ -149,9 +150,16 @@
     private decimal? TotalPagar = 0;
     private TarjetaDTO tarjeta = new TarjetaDTO();
 
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         lista = await carritoServicio.DevolverCarrito();
+
+        var authState = await authenticationState;
+        if (authState.User.Identity.IsAuthenticated)
+            disabled = false;
     }
 
     private void Disminuir(int id)
@@ -181,7 +189,7 @@
     {
         CarritoDTO producto = lista.First(p => p.Producto.IdProducto == idProducto);
 
-    if (producto != null)
+        if (producto != null)
         {
             lista.Remove(producto);
             await carritoServicio.EliminarCarrito(idProducto);
@@ -206,9 +214,12 @@
                 });
         }
 
+        var authState = await authenticationState;
+        string IdUsuario = authState.User.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Select(c => c.Value).Single();
+
         VentaDTO modelo = new VentaDTO()
             {
-                IdUsuario = 1,
+                IdUsuario = Convert.ToInt32(IdUsuario),
                 Total = lista.Sum(i => i.Total),
                 DetalleVenta = detalle
             };
