@@ -117,6 +117,7 @@ namespace Ecommerce.Servicio.Implementacion
                 // Consultar el producto y sus imágenes actuales
                 var consulta = _modeloRepositorio.Consultar(p => p.IdProducto == modelo.IdProducto)
                                                  .Include(p => p.ProductoImagenes);
+
                 var fromDbModelo = await consulta.FirstOrDefaultAsync();
 
                 if (fromDbModelo != null)
@@ -228,7 +229,7 @@ namespace Ecommerce.Servicio.Implementacion
             }
         }
 
-        public async Task<ProductoDTO> Obtener(int id)
+        /*public async Task<ProductoDTO> Obtener(int id)
         {
             try
             {
@@ -248,6 +249,22 @@ namespace Ecommerce.Servicio.Implementacion
                 throw ex;
             }
         }
+        */
+        public async Task<ProductoDTO> Obtener(int id)
+        {
+            try
+            {
+                var producto = await _modeloRepositorio.Consultar(p => p.IdProducto == id)
+                                        .Include(p => p.ProductoImagenes)  
+                                        .FirstOrDefaultAsync();
+                return _mapper.Map<ProductoDTO>(producto);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
 
     }
 }
