@@ -26,7 +26,7 @@ public partial class DbecommerceContext : DbContext
 
     public virtual DbSet<Venta> Venta { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {}
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -69,7 +69,6 @@ public partial class DbecommerceContext : DbContext
             entity.Property(e => e.FechaCreacion)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.Imagen).IsUnicode(false);
             entity.Property(e => e.Nombre)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -79,6 +78,25 @@ public partial class DbecommerceContext : DbContext
             entity.HasOne(d => d.IdCategoriaNavigation).WithMany(p => p.Productos)
                 .HasForeignKey(d => d.IdCategoria)
                 .HasConstraintName("FK__Producto__IdCate__4CA06362");
+        });
+
+        modelBuilder.Entity<ProductoImagen>(entity =>
+        {
+            entity.HasKey(e => e.IdProductoImagen).HasName("PK__ProductoImagen");
+
+            entity.ToTable("ProductoImagen");
+
+            entity.Property(e => e.RutaImagen)
+                .IsRequired()
+                .IsUnicode(false);
+            entity.Property(e => e.NumeroImagen)
+                .IsRequired();
+
+            // Relación con Producto
+            entity.HasOne(d => d.Producto)
+                .WithMany(p => p.ProductoImagenes)
+                .HasForeignKey(d => d.IdProducto)
+                .HasConstraintName("FK__ProductoImagen__IdProducto");
         });
 
         modelBuilder.Entity<Usuario>(entity =>

@@ -20,7 +20,14 @@ namespace Ecommerce.WebAssembly.Servicios.Implementacion
 
         public async Task<ResponseDTO<ProductoDTO>> Crear(ProductoDTO modelo)
         {
+            //var response = await _httpClient.PostAsJsonAsync("Producto/Crear", modelo);
             var response = await _httpClient.PostAsJsonAsync("Producto/Crear", modelo);
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                // Mostrar el error en los logs o con algún servicio de alertas
+                Console.WriteLine(error);
+            }
             var result = await response.Content.ReadFromJsonAsync<ResponseDTO<ProductoDTO>>();
             return result!;
         }

@@ -35,7 +35,11 @@
                                 {
                                     <tr>
                                         <td valign="middle">
-                                            <img class="card-img-top" src="@item.Producto.Imagen" style="width:100px">
+                                            <!--<img class="card-img-top" src="@item.Producto.Imagen" style="width:100px">-->
+                                            @if (item.Producto.Imagenes != null && item.Producto.Imagenes.Any())
+                                            {
+                                                <img class="card-img-top " src="@item.Producto.Imagenes.First().RutaImagen" alt="Imagen del producto">
+                                            }
                                         </td>
                                         <td valign="middle">@item.Producto.Nombre</td>
                                         <td valign="middle">@item.Precio</td>

@@ -20,17 +20,18 @@ namespace Ecommerce.Utilidades
             CreateMap<Categoria, CategoriaDTO>();
             CreateMap<CategoriaDTO, Categoria>();
 
-            CreateMap<Producto, ProductoDTO>();
-            CreateMap<ProductoDTO, Producto>().ForMember(destino => 
-            destino.IdCategoriaNavigation,
-            opt => opt.Ignore()
-            );
+            CreateMap<Producto, ProductoDTO>().ForMember(dest => dest.Imagenes, opt => opt.MapFrom(src => src.ProductoImagenes));
+            CreateMap<ProductoDTO, Producto>().ForMember(dest => dest.IdCategoriaNavigation,opt => opt.Ignore())
+                                              .ForMember(dest => dest.ProductoImagenes, opt => opt.MapFrom(src => src.Imagenes));
 
             CreateMap<DetalleVenta, DetalleVentaDTO>();
             CreateMap<DetalleVentaDTO, DetalleVenta>();
 
             CreateMap<Venta, VentaDTO>();
             CreateMap<VentaDTO, Venta>();
+
+            CreateMap<ProductoImagen, ProductoImagenDTO>();
+            CreateMap<ProductoImagenDTO, ProductoImagen>();
 
 
         }

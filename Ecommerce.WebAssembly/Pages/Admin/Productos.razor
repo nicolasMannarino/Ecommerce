@@ -28,6 +28,7 @@
     {
         foreach (var item in lista)
         {
+            DebugImagenes(item);
             <div class="col mb-5">
                 <div class="card h-100">
                     <!-- Sale badge-->
@@ -37,7 +38,16 @@
                     }
 
                     <!-- Product image-->
-                    <img class="card-img-top border-dark border-1" src="@item.Imagen">
+                    <!--<img class="card-img-top border-dark border-1" src="@item.Imagenes.First().RutaImagen">-->
+                    @if (item.Imagenes != null && item.Imagenes.Any())
+                    {
+                        <img class="card-img-top border-dark border-1" src="@item.Imagenes.First().RutaImagen" alt="Imagen del producto">
+                    }
+                    else
+                    {
+                        <p>No hay imágenes disponibles.</p> <!-- Opcional: Mostrar un mensaje alternativo si no hay imágenes -->
+                    }
+
                     <!-- Product details-->
                     <div class="card-body p-4">
                         <div class="text-center">
@@ -132,6 +142,25 @@
             else
             {
                 toastService.ShowWarning(response.Mensaje);
+            }
+        }
+
+    }
+    private void DebugImagenes(ProductoDTO item)
+    {
+        if (item.Imagenes == null)
+        {
+            //Console.WriteLine("Imagenes es null.");
+        }
+        else if (!item.Imagenes.Any())
+        {
+            //Console.WriteLine("Imagenes está vacío.");
+        }
+        else
+        {
+            foreach (var imagen in item.Imagenes)
+            {
+                //Console.WriteLine($"Imagen encontrada: {imagen.RutaImagen}");
             }
         }
     }

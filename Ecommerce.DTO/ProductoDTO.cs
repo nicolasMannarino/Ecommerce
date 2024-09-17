@@ -21,8 +21,8 @@ namespace Ecommerce.DTO
         public decimal? PrecioOferta { get; set; }
         [Required(ErrorMessage = "Ingrese cantidad")]
         public int? Cantidad { get; set; }
-        [Required(ErrorMessage = "Ingrese imagen")]
-        public string? Imagen { get; set; }
+        [Required(ErrorMessage = "Ingrese al menos una imagen")]
+        public List<ProductoImagenDTO>? Imagenes { get; set; } 
         public DateTime? FechaCreacion { get; set; }
         public virtual CategoriaDTO? IdCategoriaNavigation { get; set; }
     }

@@ -32,6 +32,10 @@ builder.Services.AddScoped<ICategoriaServicio, CategoriaServicio>();
 builder.Services.AddScoped<IVentaServicio, VentaServicio>();
 builder.Services.AddScoped<IProductoServicio, ProductoServicio>();
 builder.Services.AddScoped<IDashboardServicio, DashboardServicio>();
+builder.Services.AddScoped<IProductoImagenServicio, ProductoImagenServicio>();
+
+
+
 
 builder.Services.AddCors(options =>
 {
