@@ -57,32 +57,25 @@
                 <input type="number" class="form-control" @bind-value="modelo.Cantidad">
             </div>
             <ValidationMessage For="@(()=>modelo.Cantidad)" />
+            <div>
+                <InputFile multiple OnChange="Cambio"></InputFile>
+            </div>
 
-            <!--<div class="input-group mt-3">
-                <label class="input-group-text bg-light">Imagen</label>
-                <InputFile type="file" class="form-control" accept="image/png, image/gif, image/jpeg" OnChange="OnFileChange"></InputFile>
-            </div>-->
-
-            <div class="input-group mt-3">
-                @for (int i = 0; i < imagenesInputs.Count; i++)
+            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                @foreach (var im in imagenes)
                 {
-                    <div class="input-group mt-2">
-                        <label class="input-group-text bg-light">Imagen @(i + 1)</label>
-                        <InputFile class="form-control" accept="image/png, image/gif, image/jpeg" OnChange="@(e => OnFileChange(e, i))"></InputFile>
-
-                        @if (modelo.Imagenes != null && modelo.Imagenes.Count > i)
-                        {
-                            <div>
-                                <img src="@modelo.Imagenes[i].RutaImagen" alt="Preview Imagen @(i + 1)" style="max-width: 100px; max-height: 100px;" />
-                                <p>@modelo.Nombre</p> <!-- Mostrar el nombre del producto debajo de cada imagen -->
-                            </div>
-                        }
-
-                        <button type="button" class="btn btn-danger" @onclick="() => RemoverImagen(i)">Remover</button>
+                    <div style="position: relative; display: inline-block;">
+                        <img src="@im" width="200" height="200" style="border: 1px solid #ddd;" />
+                        <button @onclick="(() => EliminarImagen(im))"
+                                style="position: absolute; top: 5px; right: 5px; background-color: red; color: white; border: none; cursor: pointer; border-radius: 50%;">
+                            X
+                        </button>
                     </div>
                 }
-                <button type="button" class="btn btn-success mt-3" @onclick="AgregarImagen">Agregar Imagen</button>
             </div>
+            <ValidationMessage For="@(() => modelo.Imagenes)" />
+
+
             <div class="mt-3">
                 <button type="submit" class="btn btn-primary" style="width:130px">@boton</button>
                 <a href="/productos" class="btn btn-secondary" style="width:130px">Volver</a>
@@ -100,6 +93,57 @@
 
     private List<CategoriaDTO> listaCategoria = new List<CategoriaDTO>();
     private ProductoDTO modelo = new ProductoDTO();
+
+    private List<string> imagenes = new List<string>();
+
+    async Task Cambio(InputFileChangeEventArgs e)
+    {
+        // Inicializa la lista de imágenes si es null
+        if (modelo.Imagenes == null)
+        {
+            modelo.Imagenes = new List<ProductoImagenDTO>();
+        }
+
+        // Procesar cada archivo seleccionado
+        foreach (var file in e.GetMultipleFiles())
+        {
+            // Verifica si la extensión del archivo es válida
+            var fileInfo = new FileInfo(file.Name);
+            if (fileInfo.Extension.ToLower().Contains(".jpg") || fileInfo.Extension.ToLower().Contains(".png"))
+            {
+                // Redimensiona y convierte la imagen a base64
+                var format = $"image/{fileInfo.Extension.Replace(".", "")}";
+                var resizeImage = await file.RequestImageFileAsync(format, 450, 300);
+                var buffer = new byte[resizeImage.Size];
+                await resizeImage.OpenReadStream().ReadAsync(buffer);
+                var imageData = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
+
+                // Agrega la imagen a la lista de previsualización
+                imagenes.Add(imageData);
+
+                // Determina el índice de la nueva imagen
+                int index = modelo.Imagenes.Count;
+
+                // Agrega la imagen a la lista del modelo
+                modelo.Imagenes.Add(new ProductoImagenDTO
+                    {
+                        RutaImagen = imageData,
+                        NumeroImagen = index + 1 // Asignar un número de imagen basado en el índice
+                    });
+            }
+            else
+            {
+                toastService.ShowWarning("La extensión de la imagen debe ser '.png' o '.jpg'.");
+            }
+        }
+    }
+
+
+
+    void EliminarImagen(string imagen)
+    {
+        imagenes.Remove(imagen);
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -125,8 +169,7 @@
             if (response.EsCorrecto)
             {
                 modelo = (ProductoDTO)response.Resultado!;
-                // Inicializa los inputs de imágenes con el número de imágenes cargadas
-                imagenesInputs = modelo.Imagenes.Select(img => img.NumeroImagen).ToList();
+                imagenes = modelo.Imagenes.Select(img => img.RutaImagen).ToList();
             }
             else
             {
@@ -183,86 +226,19 @@
         }
     }
 
-    private List<int> imagenesInputs = new List<int> { 1 };
-    private List<IBrowserFile> imagenesSeleccionadas = new List<IBrowserFile>();
-
-
-    async Task OnFileChange(InputFileChangeEventArgs e, int index)
+    /*async Task Cambio(InputFileChangeEventArgs e)
     {
-        FileInfo fileInfo = new FileInfo(e.File.Name);
-
-        // Asegurarse de que la lista de imágenes esté inicializada
-        if (modelo.Imagenes == null)
+    if (modelo.Imagenes == null)
         {
-            modelo.Imagenes = new List<ProductoImagenDTO>();
-        }
-
-        // Verificar si la extensión del archivo es válida
-        if (fileInfo.Extension.ToLower().Contains(".jpg") || fileInfo.Extension.ToLower().Contains(".png"))
-        {
-            var format = $"image/{fileInfo.Extension.Replace(".", "")}";
-            var resizeImage = await e.File.RequestImageFileAsync(format, 450, 300);
-            var buffer = new byte[resizeImage.Size];
-            await resizeImage.OpenReadStream().ReadAsync(buffer);
-            var imagenData = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
-
-            // Asegurarse de que no haya más imágenes de las que deberían
-            if (modelo.Imagenes.Count > index)
-            {
-                modelo.Imagenes[index].RutaImagen = imagenData;  // Reemplazar la imagen existente
-                modelo.Imagenes[index].NumeroImagen = index;
-            }
-            else
-            {
-                modelo.Imagenes.Add(new ProductoImagenDTO { RutaImagen = imagenData, NumeroImagen = index }); // Agregar nueva imagen a la lista
-            }
-
-            // Asegurarse de que imagenesSeleccionadas se mantenga sincronizada
-            if (imagenesSeleccionadas.Count > index)
-            {
-                imagenesSeleccionadas[index] = e.File;
-            }
-            else
-            {
-                imagenesSeleccionadas.Add(e.File);
-            }
-        }
-        else
-        {
-            toastService.ShowWarning("La extensión de la imagen debe ser '.png' o '.jpg'.");
-        }
+        modelo.Imagenes = new List<ProductoImagenDTO>();
     }
-
-
-    private void AgregarImagen()
-    {
-        imagenesInputs.Add(imagenesInputs.Count + 1); // Agregar un nuevo input para la imagen
-    }
-
-
-    private void RemoverImagen(int index)
-    {
-        if (imagenesInputs.Count > 1)
+    foreach (var f in e.GetMultipleFiles())
         {
-            // Remover el input en la posición especificada
-            imagenesInputs.RemoveAt(index-1);
-
-            // Remover la imagen correspondiente del modelo solo si está dentro del rango de la lista
-            if (modelo.Imagenes.Count > index)
-            {
-                modelo.Imagenes.RemoveAt(index); // Remover la imagen del modelo
-            }
-
-            // También debemos eliminar la imagen seleccionada si existe
-            if (imagenesSeleccionadas.Count > index)
-            {
-                imagenesSeleccionadas.RemoveAt(index);
-            }
-
-            // Forzar una actualización del estado para reflejar visualmente los cambios
-            StateHasChanged();
-        }
+        using var stream = f.OpenReadStream();
+        using var memoryStream = new MemoryStream();
+        await stream.CopyToAsync(memoryStream);
+        imagenes.Add($"data:{f.ContentType};base64,{Convert.ToBase64String(memoryStream.ToArray())}");
     }
-
+    }*/
 
 }
