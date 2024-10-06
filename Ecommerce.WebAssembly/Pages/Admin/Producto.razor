@@ -60,13 +60,13 @@
             <div>
                 <InputFile multiple OnChange="Cambio"></InputFile>
             </div>
-
+            <br />
             <div style="display: flex; flex-wrap: wrap; gap: 10px;">
                 @foreach (var im in imagenes)
                 {
                     <div style="position: relative; display: inline-block;">
                         <img src="@im" width="200" height="200" style="border: 1px solid #ddd;" />
-                        <button @onclick="(() => EliminarImagen(im))"
+                        <button type="button" @onclick="(() => EliminarImagen(im))"
                                 style="position: absolute; top: 5px; right: 5px; background-color: red; color: white; border: none; cursor: pointer; border-radius: 50%;">
                             X
                         </button>
@@ -142,7 +142,12 @@
 
     void EliminarImagen(string imagen)
     {
-        imagenes.Remove(imagen);
+        int index = imagenes.IndexOf(imagen);
+        if (index >= 0)
+        {
+            imagenes.RemoveAt(index);
+            modelo.Imagenes.RemoveAt(index);
+        }
     }
 
     protected override async Task OnInitializedAsync()

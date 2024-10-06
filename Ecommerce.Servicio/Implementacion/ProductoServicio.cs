@@ -84,22 +84,6 @@ namespace Ecommerce.Servicio.Implementacion
                 // Log para verificar que el producto fue creado correctamente y tiene un ID asignado
                 Console.WriteLine($"Producto creado con Id: {rspModelo.IdProducto}");
 
-                // Inserta cada imagen en la tabla ProductoImagen
-                /*foreach (var imagen in modelo.Imagenes)
-                {
-                    var imagenModelo = new ProductoImagen
-                    {
-                        IdProducto = rspModelo.IdProducto,  // Asegúrate de usar el ID correcto aquí
-                        NumeroImagen = imagen.NumeroImagen,
-                        RutaImagen = imagen.RutaImagen
-                    };
-
-                    // Log para verificar los detalles de la imagen antes de crearla
-                    Console.WriteLine($"Agregando imagen: {imagenModelo.RutaImagen} con NumeroImagen: {imagenModelo.NumeroImagen} al ProductoId: {imagenModelo.IdProducto}");
-
-                    await _productoImagenRepositorio.Crear(imagenModelo);
-                }*/
-
                 return _mapper.Map<ProductoDTO>(rspModelo);
             }
             catch (Exception ex)
