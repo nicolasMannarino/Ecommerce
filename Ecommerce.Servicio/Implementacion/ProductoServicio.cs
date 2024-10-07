@@ -170,27 +170,46 @@ namespace Ecommerce.Servicio.Implementacion
         {
             try
             {
-                var consulta = _modeloRepositorio.Consultar(p => p.IdProducto == id);
-                var fromDbModelo = await consulta.FirstOrDefaultAsync();
+                // Consulta el producto a eliminar
+                var consultaProducto = _modeloRepositorio.Consultar(p => p.IdProducto == id);
+                var fromDbProducto = await consultaProducto.FirstOrDefaultAsync();
 
-                if (fromDbModelo != null)
-                {
-                    var respuesta = await _modeloRepositorio.Eliminar(fromDbModelo);
-                    if (!respuesta)
-                        throw new TaskCanceledException("No se pudo eliminar");
-                    return respuesta;
-                }
-                else
-                {
+                if (fromDbProducto == null)
                     throw new TaskCanceledException("No se encontraron resultados");
-                }
+
+                // Llama a la función para eliminar las imágenes relacionadas
+                await EliminarImagenesRelacionadas(id);
+
+                // Elimina el producto
+                var respuesta = await _modeloRepositorio.Eliminar(fromDbProducto);
+
+                // Confirma que el producto se eliminó correctamente
+                if (!respuesta)
+                    throw new TaskCanceledException("No se pudo eliminar el producto");
+
+                return respuesta;
             }
             catch (Exception ex)
             {
-
-                throw ex;
+                Console.WriteLine($"Error al eliminar el producto: {ex.Message}");
+                throw;
             }
         }
+
+        private async Task EliminarImagenesRelacionadas(int productoId)
+        {
+            // Consulta las imágenes relacionadas al producto
+            var consultaImagenes = _productoImagenRepositorio.Consultar(img => img.IdProducto == productoId);
+            var imagenesRelacionadas = await consultaImagenes.ToListAsync();
+
+            // Elimina cada imagen individualmente
+            foreach (var imagen in imagenesRelacionadas)
+            {
+                await _productoImagenRepositorio.Eliminar(imagen);
+            }
+        }
+
+
 
         public async Task<List<ProductoDTO>> Lista(string buscar)
         {
@@ -239,7 +258,7 @@ namespace Ecommerce.Servicio.Implementacion
             try
             {
                 var producto = await _modeloRepositorio.Consultar(p => p.IdProducto == id)
-                                        .Include(p => p.ProductoImagenes)  
+                                        .Include(p => p.ProductoImagenes)
                                         .FirstOrDefaultAsync();
                 return _mapper.Map<ProductoDTO>(producto);
             }

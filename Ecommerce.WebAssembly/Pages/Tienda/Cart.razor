@@ -42,7 +42,7 @@
                                             }
                                         </td>
                                         <td valign="middle">@item.Producto.Nombre</td>
-                                        <td valign="middle">@item.Precio</td>
+                                        <td valign="middle">@string.Format("{0:N2}", item.Precio)</td>
                                         <td valign="middle" align="center">
                                             <div class="btn-group" role="group">
                                                 <button type="button" class="btn btn-outline-dark" @onclick="(() =>Disminuir(item.Producto.IdProducto))">
@@ -54,7 +54,7 @@
                                                 </button>
                                             </div>
                                         </td>
-                                        <td valign="middle">@item.Total</td>
+                                        <td valign="middle">@string.Format("{0:N2}", item.Total)</td>
                                         <td valign="middle">
                                             <button type="button" class="btn btn-outline-dark" @onclick="(async () =>  Eliminar(item.Producto.IdProducto))">
                                                 <i class="oi oi-trash"></i>
@@ -125,7 +125,9 @@
                     <hr />
                     <div class="d-flex justify-content-between">
                         <div>Total a pagar:</div>
-                        <div>$ @(lista.Sum(i => i.Total))</div>
+                        <div>$ @string.Format("{0:N2}", lista.Sum(i => i.Total))</div>
+
+         
                     </div>
                     <div class="mt-2">
                         <div class="d-grid gap-1">

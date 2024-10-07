@@ -96,12 +96,12 @@
                                     <!-- Product price-->
                                     @if (item.PrecioOferta != 0 && item.PrecioOferta < item.Precio)
                                     {
-                                        <span class="text-danger text-decoration-line-through">$ @item.Precio</span>
-                                        <span>$@item.PrecioOferta</span>
+                                        <span class="text-danger text-decoration-line-through">$@string.Format("{0:N2}", item.Precio)</span>
+                                        <span>$@string.Format("{0:N2}", item.PrecioOferta)</span>
                                     }
                                     else
                                     {
-                                        <span>$@item.Precio</span>
+                                        <span>$@string.Format("{0:N2}", item.Precio)</span>
                                     }
                                 </div>
                             </div>

@@ -40,12 +40,12 @@
                 <div class="fs-5 mb-5">
                     @if (modelo.PrecioOferta != 0 && modelo.PrecioOferta < modelo.Precio)
                     {
-                        <span class="text-danger text-decoration-line-through">$ @modelo.Precio</span>
-                        <span>$@modelo.PrecioOferta</span>
+                        <span class="text-danger text-decoration-line-through">$ @string.Format("{0:N2}", modelo.Precio)</span>
+                        <span>$@string.Format("{0:N2}", modelo.PrecioOferta)</span>
                     }
                     else
                     {
-                        <span>$@modelo.Precio</span>
+                        <span>$@string.Format("{0:N2}", modelo.Precio)</span>
                     }
                 </div>
                 <p class="lead">@modelo.Descripcion</p>
