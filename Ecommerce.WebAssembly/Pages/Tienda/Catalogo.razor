@@ -13,6 +13,11 @@
             <button class="btn btn-outline-secondary" type="button" @onclick="(async () => await  ObtenerCatalogo())">
                 <i class="oi oi-magnifying-glass"></i>
             </button>
+            <select class="form-select ms-2" @onchange="OrdenarPorSeleccion">
+                <option value="ascendente">Precio más bajo</option>
+                <option value="descendente">Precio más alto</option>
+                <option value="mejorDescuento">Mejor descuento</option>
+            </select>
         </div>
     </div>
 </div>
@@ -123,6 +128,7 @@
     private List<CategoriaDTO>? listaCategoria = null;
     private string buscar = "";
     private string categoriaSeleccionada = "Todos";
+    private string ordenarPor = "asc";
 
     private async Task ObtenerCategorias(string Valor = "")
     {
@@ -143,6 +149,20 @@
         if (response.EsCorrecto)
         {
             listaProducto = (List<ProductoDTO>)response.Resultado!;
+            if (ordenarPor == "ascendente")
+            {
+                listaProducto = listaProducto.OrderBy(p => p.Precio).ToList();
+            }
+            else if (ordenarPor == "descendente")
+            {
+                listaProducto = listaProducto.OrderByDescending(p => p.Precio).ToList();
+            }
+            else if (ordenarPor == "mejorDescuento")
+            {
+                listaProducto = listaProducto
+                .OrderByDescending(p => p.Precio - (p.PrecioOferta > 0 ? p.PrecioOferta : p.Precio))
+                .ToList();
+            }
         }
         else
         {
@@ -169,6 +189,12 @@
             // Aquí podrías utilizar BlazoredToast para mostrar un mensaje de error si lo deseas
             Console.WriteLine($"Error en OnInitializedAsync: {ex.Message}");
         }
+    }
+
+    private async Task OrdenarPorSeleccion(ChangeEventArgs args)
+    {
+        ordenarPor = args.Value.ToString();
+        await ObtenerCatalogo();
     }
 
 }
