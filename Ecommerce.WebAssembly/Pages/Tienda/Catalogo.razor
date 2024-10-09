@@ -149,19 +149,34 @@
         if (response.EsCorrecto)
         {
             listaProducto = (List<ProductoDTO>)response.Resultado!;
+
             if (ordenarPor == "ascendente")
             {
-                listaProducto = listaProducto.OrderBy(p => p.Precio).ToList();
+                // Ordena por el precio más bajo, considerando PrecioOferta si está presente y es mayor a 0
+                listaProducto = listaProducto
+                    .OrderBy(p => p.PrecioOferta.HasValue && p.PrecioOferta > 0
+                                  ? Math.Min(p.Precio ?? decimal.MaxValue, p.PrecioOferta.Value)
+                                  : p.Precio ?? decimal.MaxValue)
+                    .ToList();
             }
             else if (ordenarPor == "descendente")
             {
-                listaProducto = listaProducto.OrderByDescending(p => p.Precio).ToList();
+                // Ordena por el precio más alto, considerando PrecioOferta si está presente y es mayor a 0
+                listaProducto = listaProducto
+                    .OrderByDescending(p => p.PrecioOferta.HasValue && p.PrecioOferta > 0
+                                            ? Math.Min(p.Precio ?? decimal.MinValue, p.PrecioOferta.Value)
+                                            : p.Precio ?? decimal.MinValue)
+                    .ToList();
             }
             else if (ordenarPor == "mejorDescuento")
             {
+                // Ordena primero por descuento, luego por precio en caso de que no tenga descuento
                 listaProducto = listaProducto
-                .OrderByDescending(p => p.Precio - (p.PrecioOferta > 0 ? p.PrecioOferta : p.Precio))
-                .ToList();
+                    .OrderByDescending(p => (p.PrecioOferta.HasValue && p.PrecioOferta > 0)
+                                            ? (p.Precio - p.PrecioOferta.Value) 
+                                            : decimal.MinValue) // Los productos sin descuento irán al final
+                    .ThenBy(p => p.Precio) 
+                    .ToList();
             }
         }
         else
@@ -169,6 +184,8 @@
             listaProducto = new List<ProductoDTO>();
         }
     }
+
+
 
     private async Task RadioSeleccion(ChangeEventArgs args)
     {

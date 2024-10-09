@@ -15,13 +15,15 @@ namespace Ecommerce.Servicio.Implementacion
 {
     public class ProductoServicio : IProductoServicio
     {
-        private readonly IGenericoRepositorio<Producto> _modeloRepositorio;
+        private readonly IGenericoRepositorio<Producto> _modeloProductoRepositorio;
+        private readonly IGenericoRepositorio<DetalleVenta> _modeloDetalleVentaRepositorio;
         private readonly IGenericoRepositorio<ProductoImagen> _productoImagenRepositorio;
         private readonly IMapper _mapper;
 
-        public ProductoServicio(IGenericoRepositorio<Producto> modeloRepositorio, IGenericoRepositorio<ProductoImagen> productoImagenRepositorio, IMapper mapper)
+        public ProductoServicio(IGenericoRepositorio<Producto> modeloRepositorio, IGenericoRepositorio<ProductoImagen> productoImagenRepositorio, IGenericoRepositorio<DetalleVenta> modeloDetalleVentaRepositorio, IMapper mapper)
         {
-            _modeloRepositorio = modeloRepositorio;
+            _modeloProductoRepositorio = modeloRepositorio;
+            _modeloDetalleVentaRepositorio = modeloDetalleVentaRepositorio;
             _productoImagenRepositorio = productoImagenRepositorio;
             _mapper = mapper;
         }
@@ -30,9 +32,10 @@ namespace Ecommerce.Servicio.Implementacion
         {
             try
             {
-                var consulta = _modeloRepositorio.Consultar(p =>
+                var consulta = _modeloProductoRepositorio.Consultar(p =>
                 p.Nombre.ToLower().Contains(buscar.ToLower()) &&
-                p.IdCategoriaNavigation.Nombre.ToLower().Contains(categoria.ToLower()));
+                p.IdCategoriaNavigation.Nombre.ToLower().Contains(categoria.ToLower())&&
+                p.Baja != true);
 
                 consulta = consulta.Include(i => i.ProductoImagenes);
 
@@ -46,24 +49,6 @@ namespace Ecommerce.Servicio.Implementacion
             }
         }
 
-        /*public async Task<ProductoDTO> Crear(ProductoDTO modelo)
-        {
-            try
-            {
-                var dbModelo = _mapper.Map<Producto>(modelo);
-                var rspModelo = await _modeloRepositorio.Crear(dbModelo);
-
-                if (rspModelo.IdProducto != 0)
-                    return _mapper.Map<ProductoDTO>(rspModelo);
-                else
-                    throw new TaskCanceledException("No se puede crear");
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }*/
 
         public async Task<ProductoDTO> Crear(ProductoDTO modelo)
         {
@@ -73,7 +58,7 @@ namespace Ecommerce.Servicio.Implementacion
                 var dbModelo = _mapper.Map<Producto>(modelo);
 
                 // Crea el producto en la base de datos utilizando el repositorio
-                var rspModelo = await _modeloRepositorio.Crear(dbModelo);
+                var rspModelo = await _modeloProductoRepositorio.Crear(dbModelo);
 
                 // Verifica si el producto se creó correctamente y tiene un ID válido
                 if (rspModelo.IdProducto == 0)
@@ -99,7 +84,7 @@ namespace Ecommerce.Servicio.Implementacion
             try
             {
                 // Consultar el producto y sus imágenes actuales
-                var consulta = _modeloRepositorio.Consultar(p => p.IdProducto == modelo.IdProducto)
+                var consulta = _modeloProductoRepositorio.Consultar(p => p.IdProducto == modelo.IdProducto)
                                                  .Include(p => p.ProductoImagenes);
 
                 var fromDbModelo = await consulta.FirstOrDefaultAsync();
@@ -148,7 +133,7 @@ namespace Ecommerce.Servicio.Implementacion
                         fromDbModelo.ProductoImagenes.Remove(imagenAEliminar);
                     }
 
-                    var respuesta = await _modeloRepositorio.Editar(fromDbModelo);
+                    var respuesta = await _modeloProductoRepositorio.Editar(fromDbModelo);
 
                     if (!respuesta)
                         throw new TaskCanceledException("No se pudo editar");
@@ -171,23 +156,39 @@ namespace Ecommerce.Servicio.Implementacion
             try
             {
                 // Consulta el producto a eliminar
-                var consultaProducto = _modeloRepositorio.Consultar(p => p.IdProducto == id);
+                var consultaProducto = _modeloProductoRepositorio.Consultar(p => p.IdProducto == id);
                 var fromDbProducto = await consultaProducto.FirstOrDefaultAsync();
 
                 if (fromDbProducto == null)
                     throw new TaskCanceledException("No se encontraron resultados");
 
-                // Llama a la función para eliminar las imágenes relacionadas
-                await EliminarImagenesRelacionadas(id);
+                var consultaDetalleVenta = _modeloDetalleVentaRepositorio.Consultar( p => p.IdProducto == id);
+                
+                if(consultaDetalleVenta == null) //No existe detalle venta para ese id de producto
+                {
+                    // Llama a la función para eliminar las imágenes relacionadas
+                    await EliminarImagenesRelacionadas(id);
 
-                // Elimina el producto
-                var respuesta = await _modeloRepositorio.Eliminar(fromDbProducto);
+                    // Elimina el producto
+                    var respuesta = await _modeloProductoRepositorio.Eliminar(fromDbProducto);
 
-                // Confirma que el producto se eliminó correctamente
-                if (!respuesta)
-                    throw new TaskCanceledException("No se pudo eliminar el producto");
+                    // Confirma que el producto se eliminó correctamente
+                    if (!respuesta)
+                        throw new TaskCanceledException("No se pudo eliminar el producto");
+                    return respuesta;
+                }
+                else
+                {
 
-                return respuesta;
+                    fromDbProducto.Baja = true;
+
+                    // Guarda el cambio
+                    var respuesta = await _modeloProductoRepositorio.Editar(fromDbProducto);
+                    if (!respuesta)
+                        throw new TaskCanceledException("No se pudo actualizar el estado de baja del producto");
+
+                    return true;
+                }              
             }
             catch (Exception ex)
             {
@@ -215,7 +216,7 @@ namespace Ecommerce.Servicio.Implementacion
         {
             try
             {
-                var consulta = _modeloRepositorio.Consultar(p =>
+                var consulta = _modeloProductoRepositorio.Consultar(p =>
                 p.Nombre.ToLower().Contains(buscar.ToLower())
                 );
 
@@ -257,7 +258,7 @@ namespace Ecommerce.Servicio.Implementacion
         {
             try
             {
-                var producto = await _modeloRepositorio.Consultar(p => p.IdProducto == id)
+                var producto = await _modeloProductoRepositorio.Consultar(p => p.IdProducto == id)
                                         .Include(p => p.ProductoImagenes)
                                         .FirstOrDefaultAsync();
                 return _mapper.Map<ProductoDTO>(producto);

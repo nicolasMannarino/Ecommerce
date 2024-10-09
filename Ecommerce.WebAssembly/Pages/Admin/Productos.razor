@@ -92,13 +92,15 @@
         var response = await productoServicio.Lista(Valor);
         if (response.EsCorrecto)
         {
-            lista = (List<ProductoDTO>)response.Resultado!;
+            // Filtra los productos donde `Baja` es distinto de `false`
+            lista = ((List<ProductoDTO>)response.Resultado!).Where(p => p.Baja != true).ToList();
         }
         else
         {
             lista = new List<ProductoDTO>();
         }
     }
+
 
     protected override async Task OnInitializedAsync()
     {

@@ -138,8 +138,6 @@
         }
     }
 
-
-
     void EliminarImagen(string imagen)
     {
         int index = imagenes.IndexOf(imagen);
@@ -208,6 +206,7 @@
         }
         else
         {
+            modelo.Baja = false;
             var response = await productoServicio.Crear(modelo);
             if (response.EsCorrecto)
             {
@@ -230,20 +229,4 @@
             toastService.ShowWarning(mensaje);
         }
     }
-
-    /*async Task Cambio(InputFileChangeEventArgs e)
-    {
-    if (modelo.Imagenes == null)
-        {
-        modelo.Imagenes = new List<ProductoImagenDTO>();
-    }
-    foreach (var f in e.GetMultipleFiles())
-        {
-        using var stream = f.OpenReadStream();
-        using var memoryStream = new MemoryStream();
-        await stream.CopyToAsync(memoryStream);
-        imagenes.Add($"data:{f.ContentType};base64,{Convert.ToBase64String(memoryStream.ToArray())}");
-    }
-    }*/
-
 }
