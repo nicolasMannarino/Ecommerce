@@ -26,7 +26,12 @@ public partial class DbecommerceContext : DbContext
 
     public virtual DbSet<Venta> Venta { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseSqlServer("Server=Manna\\SQLEXPRESS; DataBase=DBEcommerce; Trusted_Connection=True; TrustServerCertificate=True;");
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -114,9 +119,6 @@ public partial class DbecommerceContext : DbContext
             entity.Property(e => e.FechaCreacion)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.NombreCompleto)
-                .HasMaxLength(50)
-                .IsUnicode(false);
             entity.Property(e => e.Rol)
                 .HasMaxLength(50)
                 .IsUnicode(false);

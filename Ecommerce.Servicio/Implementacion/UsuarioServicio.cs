@@ -69,7 +69,8 @@ namespace Ecommerce.Servicio.Implementacion
 
                 if (fromDbModelo != null)
                 {
-                    fromDbModelo.NombreCompleto = modelo.NombreCompleto;
+                    fromDbModelo.Nombre = modelo.Nombre;
+                    fromDbModelo.Apellido = modelo.Apellido;
                     fromDbModelo.Correo = modelo.Correo;
                     fromDbModelo.Clave = modelo.Clave;
                     var respuesta = await _modeloRepositorio.Editar(fromDbModelo);
@@ -122,7 +123,7 @@ namespace Ecommerce.Servicio.Implementacion
             {
                 var consulta = _modeloRepositorio.Consultar(p => 
                 p.Rol == rol &&
-                string.Concat(p.NombreCompleto.ToLower(),p.Correo.ToLower()).Contains(buscar.ToLower()));
+                string.Concat(p.Nombre.ToLower(), p.Apellido.ToLower(), p.Correo.ToLower()).Contains(buscar.ToLower()));
 
                 List<UsuarioDTO> lista = _mapper.Map<List<UsuarioDTO>>(await consulta.ToListAsync());
                 return lista;

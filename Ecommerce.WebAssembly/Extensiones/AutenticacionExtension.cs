@@ -23,7 +23,8 @@ namespace Ecommerce.WebAssembly.Extensiones
                 claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, sesionUsuario.IdUsuario.ToString()),
-                    new Claim(ClaimTypes.Name, sesionUsuario.NombreCompleto),
+                    new Claim(ClaimTypes.Name, sesionUsuario.Nombre),
+                    new Claim(ClaimTypes.Surname, sesionUsuario.Apellido),
                     new Claim(ClaimTypes.Email, sesionUsuario.Correo),
                     new Claim(ClaimTypes.Role, sesionUsuario.Rol)
 
@@ -50,7 +51,8 @@ namespace Ecommerce.WebAssembly.Extensiones
             var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, sesionUsuario.IdUsuario.ToString()),
-                    new Claim(ClaimTypes.Name, sesionUsuario.NombreCompleto),
+                    new Claim(ClaimTypes.Name, sesionUsuario.Nombre),
+                    new Claim(ClaimTypes.Surname, sesionUsuario.Apellido),
                     new Claim(ClaimTypes.Email, sesionUsuario.Correo),
                     new Claim(ClaimTypes.Role, sesionUsuario.Rol)
 

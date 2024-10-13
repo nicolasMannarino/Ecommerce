@@ -17,10 +17,16 @@
             <DataAnnotationsValidator></DataAnnotationsValidator>
 
             <div class="input-group">
-                <span class="input-group-text bg-light" id="basic-addon3">Nombre Completo</span>
-                <input type="text" class="form-control" @bind-value="modelo.NombreCompleto">
+                <span class="input-group-text bg-light" id="basic-addon3">Nombre</span>
+                <input type="text" class="form-control" @bind-value="modelo.Nombre">
             </div>
-            <ValidationMessage For="@(()=>modelo.NombreCompleto)" />
+            <ValidationMessage For="@(()=>modelo.Nombre)" />
+
+            <div class="input-group">
+                <span class="input-group-text bg-light" id="basic-addon3">Apellido</span>
+                <input type="text" class="form-control" @bind-value="modelo.Apellido">
+            </div>
+            <ValidationMessage For="@(()=>modelo.Apellido)" />
 
             <div class="input-group mt-3">
                 <span class="input-group-text bg-light" id="basic-addon3">Correo</span>

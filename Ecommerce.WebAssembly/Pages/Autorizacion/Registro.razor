@@ -17,12 +17,17 @@
                         <DataAnnotationsValidator></DataAnnotationsValidator>
 
                         <div class="form-floating mb-3">
-                            <input class="form-control" id="inputEmail" type="text" placeholder="name@example.com" @bind-value="modelo.NombreCompleto" autocomplete="off" />
-                            <label for="inputEmail">Nombre Completo</label>
-                            <ValidationMessage For="@(()=>modelo.NombreCompleto)" />
+                            <input class="form-control" id="inputNombre" type="text" placeholder="Nombre" @bind-value="modelo.Nombre" autocomplete="off" />
+                            <label for="inputNombre">Nombre</label>
+                            <ValidationMessage For="@(()=>modelo.Nombre)" />
                         </div>
                         <div class="form-floating mb-3">
-                            <input class="form-control" id="inputEmail" type="email" placeholder="name@example.com" @bind-value="modelo.Correo" autocomplete="off" />
+                            <input class="form-control" id="inputApellido" type="text" placeholder="Apellido" @bind-value="modelo.Apellido" autocomplete="off" />
+                            <label for="inputApellido">Apellido</label>
+                            <ValidationMessage For="@(()=>modelo.Apellido)" />
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="inputEmail" type="email" placeholder="nombre@ejemplo.com" @bind-value="modelo.Correo" autocomplete="off" />
                             <label for="inputEmail">Correo</label>
                             <ValidationMessage For="@(()=>modelo.Correo)" />
                         </div>

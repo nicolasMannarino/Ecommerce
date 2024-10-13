@@ -50,7 +50,7 @@ namespace Ecommerce.Servicio.Implementacion
 
         private int Productos()
         {
-            var consulta = _productoRepositorio.Consultar();
+            var consulta = _productoRepositorio.Consultar(p => p.Baja != true);
             int total = consulta.Count();
             return total;
         }

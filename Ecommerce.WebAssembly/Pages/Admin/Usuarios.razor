@@ -37,7 +37,8 @@
                             <i class="oi oi-person" style="font-size:50px"></i>
                         </div>
                         <div class="text-start">
-                            <p class="m-1"><b>Nombre: </b>@item.NombreCompleto</p>
+                            <p class="m-1"><b>Nombre: </b>@item.Nombre</p>
+                            <p class="m-1"><b>Apellido: </b>@item.Apellido</p>
                             <p class="m-1"><b>Correo: </b>@item.Correo</p>
                         </div>
                     </div>
@@ -89,7 +90,7 @@
         SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
             {
                 Title = "Está seguro?",
-                Text = $"Eliminar usuario: {modelo.NombreCompleto}",
+                Text = $"Eliminar usuario: {modelo.Nombre}",
                 Icon = SweetAlertIcon.Warning,
                 ShowCancelButton = true,
                 ConfirmButtonText = "Si, eliminar",

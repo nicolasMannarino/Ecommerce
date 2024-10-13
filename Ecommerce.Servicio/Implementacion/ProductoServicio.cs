@@ -42,11 +42,7 @@ namespace Ecommerce.Servicio.Implementacion
                 List<ProductoDTO> lista = _mapper.Map<List<ProductoDTO>>(await consulta.ToListAsync());
                 return lista;
             }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
+            catch (Exception) { throw; }
         }
 
 
@@ -100,12 +96,12 @@ namespace Ecommerce.Servicio.Implementacion
                     fromDbModelo.Cantidad = modelo.Cantidad;
 
                     var imagenesActuales = fromDbModelo.ProductoImagenes?.ToList() ?? new List<ProductoImagen>();
-
+                    foreach (var (imgDto, imagenExistente) in
                     // Actualizar o agregar nuevas imágenes
-                    foreach (var imgDto in modelo.Imagenes)
+                    from imgDto in modelo.Imagenes
+                    let imagenExistente = imagenesActuales.FirstOrDefault(i => i.IdProductoImagen == imgDto.IdImagen && i.NumeroImagen == imgDto.NumeroImagen)
+                    select (imgDto, imagenExistente))
                     {
-                        var imagenExistente = imagenesActuales.FirstOrDefault(i => i.IdProductoImagen == imgDto.IdImagen && i.NumeroImagen == imgDto.NumeroImagen);
-
                         if (imagenExistente != null)
                         {
                             // Actualizar la ruta de la imagen existente
@@ -226,34 +222,13 @@ namespace Ecommerce.Servicio.Implementacion
                 List<ProductoDTO> lista = _mapper.Map<List<ProductoDTO>>(await consulta.ToListAsync());
                 return lista;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
-                throw ex;
+                throw;
             }
         }
 
-        /*public async Task<ProductoDTO> Obtener(int id)
-        {
-            try
-            {
-                var consulta = _modeloRepositorio.Consultar(p => p.IdProducto == id);
-                consulta = consulta.Include(c => c.IdCategoriaNavigation)
-                                   .Include(i => i.ProductoImagenes);
-                var fromDbModelo = await consulta.FirstOrDefaultAsync();
-
-                if (fromDbModelo != null)
-                    return _mapper.Map<ProductoDTO>(fromDbModelo);
-                else
-                    throw new TaskCanceledException("No se encontraron coincidencias");
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-        */
         public async Task<ProductoDTO> Obtener(int id)
         {
             try
@@ -263,9 +238,9 @@ namespace Ecommerce.Servicio.Implementacion
                                         .FirstOrDefaultAsync();
                 return _mapper.Map<ProductoDTO>(producto);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
