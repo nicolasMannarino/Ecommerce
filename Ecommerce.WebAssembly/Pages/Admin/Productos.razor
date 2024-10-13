@@ -6,7 +6,7 @@
 
 @attribute [Authorize(Roles = "Administrador")];
 
-<div class="row justify-content-center  mt-3">
+<div class="row justify-content-center mt-3">
     <div class="col-sm-6 col-md-4 col-xl-3 mb-4">
         <div class="d-grid gap-1 col-12 mx-auto">
             <a class="btn btn-primary" href="/producto">Nuevo producto</a>
@@ -21,56 +21,63 @@
         </div>
     </div>
 </div>
-
+<div class="row justify-content-start mt-2">
+    <h3>Productos Activos</h3>
+</div>
 <div class="row gx-4 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 justify-content-start mt-2">
-
     @if (lista != null)
     {
-        foreach (var item in lista)
+        var productosActivos = lista.Where(p => p.Baja != true).ToList();
+        if (productosActivos.Any())
         {
-            DebugImagenes(item);
-            <div class="col mb-5">
-                <div class="card h-100">
-                    @if (DateTime.Now < item.FechaCreacion.Value.AddDays(30))
-                    {
-                        <div class="badge bg-primary text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Nuevo</div>
-                    }
+            foreach (var item in productosActivos)
+            {
+                DebugImagenes(item);
+                <div class="col mb-5">
+                    <div class="card h-100">
+                        @if (DateTime.Now < item.FechaCreacion.Value.AddDays(30))
+                        {
+                            <div class="badge bg-primary text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Nuevo</div>
+                        }
 
-                    @if (item.Imagenes != null && item.Imagenes.Any())
-                    {
-                        <img class="card-img-top border-dark border-1" src="@item.Imagenes.First().RutaImagen" alt="Imagen del producto">
-                    }
-                    else
-                    {
-                        <p>No hay imágenes disponibles.</p> 
-                    }
+                        @if (item.Imagenes != null && item.Imagenes.Any())
+                        {
+                            <img class="card-img-top border-dark border-1" src="@item.Imagenes.First().RutaImagen" alt="Imagen del producto">
+                        }
+                        else
+                        {
+                            <p>No hay imágenes disponibles.</p>
+                        }
 
-                    <div class="card-body p-4">
-                        <div class="text-center">
-                            <h5 class="fw-bolder">@item.Nombre</h5>
-                            @if (item.PrecioOferta != 0 && item.PrecioOferta < item.Precio)
-                            {
-                                <span class="text-danger text-decoration-line-through">$ @item.Precio</span>
-                                <span>$@item.PrecioOferta</span>
-                            }
-                            else
-                            {
-                                <span>$@item.Precio</span>
-                            }
-
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <h5 class="fw-bolder">@item.Nombre</h5>
+                                @if (item.PrecioOferta != 0 && item.PrecioOferta < item.Precio)
+                                {
+                                    <span class="text-danger text-decoration-line-through">$ @item.Precio</span>
+                                    <span>$@item.PrecioOferta</span>
+                                }
+                                else
+                                {
+                                    <span>$@item.Precio</span>
+                                }
+                            </div>
                         </div>
-                    </div>
-                    <!-- Product actions-->
-                    <div class="card-footer bg-transparent">
-                        <div class="row justify-content-between">
-                            <a class="col-5 btn btn-sm btn-outline-primary mt-auto" href="/producto/@item.IdProducto"><i class="oi oi-pencil fs-5"></i></a>
-                            <button class="col-5 btn btn-sm btn-outline-danger mt-auto" @onclick="(async () => await Eliminar(item))">
-                                <i class="oi oi-trash fs-5"></i>
-                            </button>
+                        <div class="card-footer bg-transparent">
+                            <div class="row justify-content-between">
+                                <a class="col-5 btn btn-sm btn-outline-primary mt-auto" href="/producto/@item.IdProducto"><i class="oi oi-pencil fs-5"></i></a>
+                                <button class="col-5 btn btn-sm btn-outline-danger mt-auto" @onclick="(async () => await Eliminar(item))">
+                                    <i class="oi oi-trash fs-5"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            }
+        }
+        else
+        {
+            <p>No hay productos activos.</p>
         }
     }
     else
@@ -79,8 +86,62 @@
             <span class="visually-hidden">Loading...</span>
         </div>
     }
+</div>
+<div class="row justify-content-start mt-2">
+    <h3>Productos Inactivos</h3>
+</div>
+<div class="row gx-4 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 justify-content-start mt-4">
+    <br />
+    @if (lista != null)
+    {
+        var productosInactivos = lista.Where(p => p.Baja == true).ToList();
+        if (productosInactivos.Any())
+        {
+            foreach (var item in productosInactivos)
+            {
+                DebugImagenes(item);
+                <div class="col mb-5">
+                    <div class="card h-100">
+                        @if (item.Imagenes != null && item.Imagenes.Any())
+                        {
+                            <img class="card-img-top border-dark border-1" src="@item.Imagenes.First().RutaImagen" alt="Imagen del producto">
+                        }
+                        else
+                        {
+                            <p>No hay imágenes disponibles.</p>
+                        }
 
-
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <h5 class="fw-bolder">@item.Nombre</h5>
+                                <span class="text-danger text-decoration-line-through">$ @item.Precio</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="row justify-content-between">
+                                <button class="col-5 btn btn-sm btn-outline-success mt-auto" @onclick="(async () => await Activar(item))">
+                                    <i class="oi oi-check fs-5"></i> Activar
+                                </button>
+                                <button class="col-5 btn btn-sm btn-outline-danger mt-auto" @onclick="(async () => await Eliminar(item))">
+                                    <i class="oi oi-trash fs-5"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No hay productos inactivos.</p>
+        }
+    }
+    else
+    {
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    }
 </div>
 
 @code {
@@ -93,7 +154,7 @@
         if (response.EsCorrecto)
         {
             // Filtra los productos donde `Baja` es distinto de `false`
-            lista = ((List<ProductoDTO>)response.Resultado!).Where(p => p.Baja != true).ToList();
+            lista = ((List<ProductoDTO>)response.Resultado!).ToList();
         }
         else
         {
@@ -142,6 +203,7 @@
         }
 
     }
+
     private void DebugImagenes(ProductoDTO item)
     {
         if (item.Imagenes == null)
@@ -158,6 +220,22 @@
             {
                 //Console.WriteLine($"Imagen encontrada: {imagen.RutaImagen}");
             }
+        }
+    }
+
+    private async Task Activar(ProductoDTO modelo)
+    {
+        modelo.Baja = false; // Cambiar el estado de baja
+        var response = await productoServicio.Editar(modelo); // Asegúrate de tener un método para actualizar el producto
+
+        if (response.EsCorrecto)
+        {
+            await ObtenerProductos();
+            toastService.ShowSuccess("El producto fue activado");
+        }
+        else
+        {
+            toastService.ShowWarning(response.Mensaje);
         }
     }
 }

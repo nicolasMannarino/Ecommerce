@@ -34,7 +34,8 @@ namespace Ecommerce.Servicio.Implementacion
             {
                 var consulta = _modeloProductoRepositorio.Consultar(p =>
                 p.Nombre.ToLower().Contains(buscar.ToLower()) &&
-                p.IdCategoriaNavigation.Nombre.ToLower().Contains(categoria.ToLower())&&
+                p.IdCategoriaNavigation.Nombre.ToLower()
+                .Contains(categoria.ToLower())&&
                 p.Baja != true);
 
                 consulta = consulta.Include(i => i.ProductoImagenes);
@@ -94,6 +95,7 @@ namespace Ecommerce.Servicio.Implementacion
                     fromDbModelo.Precio = modelo.Precio;
                     fromDbModelo.PrecioOferta = modelo.PrecioOferta;
                     fromDbModelo.Cantidad = modelo.Cantidad;
+                    fromDbModelo.Baja = modelo.Baja;
 
                     var imagenesActuales = fromDbModelo.ProductoImagenes?.ToList() ?? new List<ProductoImagen>();
                     foreach (var (imgDto, imagenExistente) in
@@ -160,7 +162,7 @@ namespace Ecommerce.Servicio.Implementacion
 
                 var consultaDetalleVenta = _modeloDetalleVentaRepositorio.Consultar( p => p.IdProducto == id);
                 
-                if(consultaDetalleVenta == null) //No existe detalle venta para ese id de producto
+                if(!await consultaDetalleVenta.AnyAsync()) //No existe detalle venta para ese id de producto
                 {
                     // Llama a la función para eliminar las imágenes relacionadas
                     await EliminarImagenesRelacionadas(id);
@@ -175,7 +177,6 @@ namespace Ecommerce.Servicio.Implementacion
                 }
                 else
                 {
-
                     fromDbProducto.Baja = true;
 
                     // Guarda el cambio
