@@ -45,6 +45,11 @@ namespace Ecommerce.WebAssembly.Servicios.Implementacion
             return await _httpClient.GetFromJsonAsync<ResponseDTO<List<UsuarioDTO>>>($"Usuario/Lista/{rol}/{buscar}");
         }
 
+        public async Task<ResponseDTO<List<UsuarioDTO>>> Lista(string buscar)
+        {
+            return await _httpClient.GetFromJsonAsync<ResponseDTO<List<UsuarioDTO>>>($"Usuario/Lista/{buscar}");
+        }
+
         public async Task<ResponseDTO<UsuarioDTO>> Obtener(int id)
         {
             return await _httpClient.GetFromJsonAsync<ResponseDTO<UsuarioDTO>>($"Usuario/Obtener/{id}");

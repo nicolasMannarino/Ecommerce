@@ -1,6 +1,7 @@
 ﻿@page "/registrarse"
 @layout LoginLayout
 
+@inject IMensajeServicio _mensajeServicio
 @inject IUsuarioServicio _usuarioServicio
 @inject NavigationManager _navServicio
 @inject IToastService toastService
@@ -77,7 +78,10 @@
         if (response.EsCorrecto)
         {
             toastService.ShowSuccess("Su cuenta ha sido creada");
-            _navServicio.NavigateTo("/login");           
+            _navServicio.NavigateTo("/login");     
+            
+            var mensaje = $"Usuario registrado: {modelo.Nombre} - {modelo.Correo}";
+            await _mensajeServicio.EnviarMensajeAsync("cola_registro_usuario",modelo.Nombre,modelo.Correo, mensaje);
         }
         else
         {

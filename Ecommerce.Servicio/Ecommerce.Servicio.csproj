@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MailKit" Version="4.8.0" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
+    <PackageReference Include="SendGrid" Version="9.29.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Ecommerce.DTO\Ecommerce.DTO.csproj" />
     <ProjectReference Include="..\Ecommerce.Model\Ecommerce.Modelo.csproj" />
     <ProjectReference Include="..\Ecommerce.Repositorio\Ecommerce.Repositorio.csproj" />

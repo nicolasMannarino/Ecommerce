@@ -69,7 +69,7 @@
 
     private async Task ObtenerUsuarios(string Valor = "")
     {
-        var response = await usuarioServicio.Lista("Administrador", Valor);
+        var response = await usuarioServicio.Lista(Valor);
         if (response.EsCorrecto)
         {
             lista = (List<UsuarioDTO>)response.Resultado!;

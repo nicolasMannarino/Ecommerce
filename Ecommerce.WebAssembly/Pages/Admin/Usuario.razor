@@ -16,13 +16,13 @@
         <EditForm Model="modelo" OnValidSubmit="GuardarCambios">
             <DataAnnotationsValidator></DataAnnotationsValidator>
 
-            <div class="input-group">
+            <div class="input-group mt-3">
                 <span class="input-group-text bg-light" id="basic-addon3">Nombre</span>
                 <input type="text" class="form-control" @bind-value="modelo.Nombre">
             </div>
             <ValidationMessage For="@(()=>modelo.Nombre)" />
 
-            <div class="input-group">
+            <div class="input-group mt-3">
                 <span class="input-group-text bg-light" id="basic-addon3">Apellido</span>
                 <input type="text" class="form-control" @bind-value="modelo.Apellido">
             </div>

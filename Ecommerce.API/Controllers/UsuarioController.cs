@@ -35,6 +35,26 @@ namespace Ecommerce.API.Controllers
             return Ok(response);
         }
 
+        [HttpGet("Lista/{buscar:alpha?}")]
+        public async Task<IActionResult> Lista(string buscar = "NA")
+        {
+            var response = new ResponseDTO<List<UsuarioDTO>>();
+            try
+            {
+                if (buscar == "NA")
+                    buscar = "";
+
+                response.EsCorrecto = true;
+                response.Resultado = await _usuarioServicio.Lista(buscar);
+            }
+            catch (Exception ex)
+            {
+                response.EsCorrecto = false;
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
+
         [HttpGet("Obtener/{Id:int}")]
         public async Task<IActionResult> Obtener(int Id)
         {

@@ -33,6 +33,8 @@ builder.Services.AddScoped<IVentaServicio, VentaServicio>();
 builder.Services.AddScoped<IProductoServicio, ProductoServicio>();
 builder.Services.AddScoped<IDashboardServicio, DashboardServicio>();
 builder.Services.AddScoped<IProductoImagenServicio, ProductoImagenServicio>();
+builder.Services.AddScoped<IMensajeServicio, MensajeServicio>();
+builder.Services.AddScoped<ICorreoServicio, CorreoServicio>();
 
 
 
