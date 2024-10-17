@@ -24,13 +24,68 @@
 
 
 
+
 <div class="row">
     <div class="col-sm-3">
-
-
+        <div class="card">
+            <div class="card-header text-white bg-dark">
+                Rango de Precio
+            </div>
+            <div class="card-body">
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Min</span>
+                    <input type="number" class="form-control" @bind-value="precioMinimo" step="1" min="0" placeholder="0">
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Max</span>
+                    <input type="number" class="form-control" @bind-value="precioMaximo" step="1" min="0" placeholder="1000">
+                </div>
+                <button class="btn btn-primary" @onclick="ObtenerCatalogo">Filtrar</button>
+            </div>
+        </div>
+        <br />
         <div class="card">
             <div class="card-header text-white bg-dark">
                 Categorias
+            </div>
+            <div class="card-body">
+                @if (listaCategoria != null)
+                {
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="categoria" id="Todos" value="Todos"
+                               @onchange="RadioSeleccion"
+                               checked=@(categoriaSeleccionada.Equals("Todos"))>
+                        <label class="form-check-label" for="Todos">
+                            Todos
+                        </label>
+                    </div>
+
+                    @foreach (var item in listaCategoria)
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="categoria" id="@item.IdCategoria" value="@item.Nombre"
+                                   @onchange="RadioSeleccion"
+                                   checked=@(categoriaSeleccionada.Equals(item.Nombre, StringComparison.OrdinalIgnoreCase))>
+                            <label class="form-check-label" for="@item.IdCategoria">
+                                @item.Nombre
+                            </label>
+                        </div>
+
+                    }
+                }
+                else
+                {
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                }
+            </div>
+
+        </div>
+        <br />
+        <div class="card">
+            <div class="card-header text-white bg-dark">
+                Filtros
             </div>
             <div class="card-body">
                 @if (listaCategoria != null)
@@ -129,6 +184,8 @@
     private string buscar = "";
     private string categoriaSeleccionada = "Todos";
     private string ordenarPor = "asc";
+    private decimal? precioMinimo = null;
+    private decimal? precioMaximo = null;
 
     private async Task ObtenerCategorias(string Valor = "")
     {
@@ -149,6 +206,21 @@
         if (response.EsCorrecto)
         {
             listaProducto = (List<ProductoDTO>)response.Resultado!;
+
+            if (precioMinimo.HasValue || precioMaximo.HasValue)
+            {
+                listaProducto = listaProducto.Where(p =>
+                {
+                    decimal precioActual = p.PrecioOferta.HasValue && p.PrecioOferta > 0
+                                            ? p.PrecioOferta.Value
+                                            : p.Precio ?? decimal.MaxValue;
+
+                    bool cumpleMinimo = !precioMinimo.HasValue || precioActual >= precioMinimo.Value;
+                    bool cumpleMaximo = !precioMaximo.HasValue || precioActual <= precioMaximo.Value;
+
+                    return cumpleMinimo && cumpleMaximo;
+                }).ToList();
+            }
 
             if (ordenarPor == "ascendente")
             {

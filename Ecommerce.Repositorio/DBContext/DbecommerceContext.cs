@@ -17,14 +17,12 @@ public partial class DbecommerceContext : DbContext
     }
 
     public virtual DbSet<Categoria> Categoria { get; set; }
-
     public virtual DbSet<DetalleVenta> DetalleVenta { get; set; }
-
     public virtual DbSet<Producto> Productos { get; set; }
-
     public virtual DbSet<Usuario> Usuarios { get; set; }
-
     public virtual DbSet<Venta> Venta { get; set; }
+    public virtual DbSet<Filtro> Filtro { get; set; }
+
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
         if (!optionsBuilder.IsConfigured)
@@ -136,6 +134,45 @@ public partial class DbecommerceContext : DbContext
             entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.Venta)
                 .HasForeignKey(d => d.IdUsuario)
                 .HasConstraintName("FK__Venta__IdUsuario__534D60F1");
+        });
+
+        modelBuilder.Entity<Filtro>(entity =>
+        {
+            entity.HasKey(e => e.IdFiltro).HasName("PK__Filtro__1CB2D349");
+
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            entity.Property(e => e.Tipo)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            // Relación con CategoriaFiltro
+            entity.HasMany(e => e.CategoriasFiltro)
+                .WithOne(cf => cf.Filtro)
+                .HasForeignKey(cf => cf.IdFiltro)
+                .HasConstraintName("FK__CategoriaFiltro__IdFiltro");
+        });
+
+        modelBuilder.Entity<CategoriaFiltro>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__CategoriaFiltro__0F975522");
+
+            // Propiedades
+            entity.Property(e => e.IdFiltro).IsRequired();
+            entity.Property(e => e.IdCategoria).IsRequired();
+
+            // Relaciones
+            entity.HasOne(cf => cf.Filtro)
+                .WithMany(f => f.CategoriasFiltro)
+                .HasForeignKey(cf => cf.IdFiltro)
+                .HasConstraintName("FK__CategoriaFiltro__IdFiltro");
+
+            entity.HasOne(cf => cf.Categoria)
+                .WithMany(c => c.CategoriasFiltro)
+                .HasForeignKey(cf => cf.IdCategoria)
+                .HasConstraintName("FK__CategoriaFiltro__IdCategoria");
         });
 
         OnModelCreatingPartial(modelBuilder);

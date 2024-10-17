@@ -33,6 +33,12 @@ namespace Ecommerce.Utilidades
             CreateMap<ProductoImagen, ProductoImagenDTO>();
             CreateMap<ProductoImagenDTO, ProductoImagen>();
 
+            CreateMap<Filtro, FiltroDTO>();
+            CreateMap<FiltroDTO, Filtro>();
+
+            CreateMap<CategoriaFiltro, CategoriaFiltroDTO>();
+            CreateMap<CategoriaFiltroDTO, CategoriaFiltro>();
+
 
         }
     }

@@ -30,6 +30,7 @@ builder.Services.AddScoped<ICarritoServicio, CarritoServicio>();
 builder.Services.AddScoped<IVentaServicio, VentaServicio>();
 builder.Services.AddScoped<IDashboardServicio, DashboardServicio>();
 builder.Services.AddScoped<IMensajeServicio, MensajeServicio>();
+builder.Services.AddScoped<IFiltroServicio, FiltroServicio>();
 
 builder.Services.AddSweetAlert2();
 

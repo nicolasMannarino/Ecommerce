@@ -5,14 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modelo
+namespace Ecommerce.DTO
 {
-    public class Filtro
+    public class FiltroDTO
     {
-        [Key]
         public int IdFiltro { get; set; }
+        [Required(ErrorMessage = "Ingrese nombre")]
         public string? Nombre { get; set; }
+        [Required(ErrorMessage = "Ingrese Tipo")]
         public string? Tipo { get; set; }
-        public virtual ICollection<CategoriaFiltro> CategoriasFiltro { get; set; }
+        public List<int>? CategoriaIds { get; set; }
     }
 }
