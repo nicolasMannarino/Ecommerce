@@ -10,6 +10,7 @@ using Ecommerce.Repositorio.Contrato;
 using Ecommerce.Servicio.Contrato;
 using AutoMapper;
 using System.Text.Json;
+using Microsoft.AspNetCore.Identity;
 
 namespace Ecommerce.Servicio.Implementacion
 {
@@ -29,17 +30,26 @@ namespace Ecommerce.Servicio.Implementacion
         {
             try
             {
-                var consulta = _modeloRepositorio.Consultar(p => p.Correo == modelo.Correo && p.Clave == modelo.Clave);
+                var consulta = _modeloRepositorio.Consultar(p => p.Correo == modelo.Correo);
                 var fromDbModelo = await consulta.FirstOrDefaultAsync();
 
-                if (fromDbModelo != null)
+                if (fromDbModelo == null)
+                    throw new TaskCanceledException("No se encontró un usuario con ese correo.");
+
+                var hasher = new PasswordHasher<Usuario>();
+                var resultado = hasher.VerifyHashedPassword(fromDbModelo, fromDbModelo.Clave, modelo.Clave);
+
+                if (resultado == PasswordVerificationResult.Success)
+                {
                     return _mapper.Map<SesionDTO>(fromDbModelo);
+                }
                 else
-                    throw new TaskCanceledException("No se encontraron coincidencias");
+                {
+                    throw new TaskCanceledException("La contraseña ingresada es incorrecta.");
+                }
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
@@ -48,22 +58,38 @@ namespace Ecommerce.Servicio.Implementacion
         {
             try
             {
-                var dbModelo = _mapper.Map<Usuario>(modelo);
-                var rspModelo = await _modeloRepositorio.Crear(dbModelo);
+                var consulta = _modeloRepositorio.Consultar(p => p.Correo == modelo.Correo);
+                var fromDbModelo = await consulta.FirstOrDefaultAsync();
 
-                if (rspModelo.IdUsuario != 0)
+                if (fromDbModelo == null)
                 {
-                    var mensaje = JsonSerializer.Serialize(new {Email = modelo.Correo, Nombre = modelo.Nombre});
-                    await _mensajeServicio.EnviarMensajeAsync("cola_registro_usuario", mensaje);
-                    return _mapper.Map<UsuarioDTO>(rspModelo);
+                    var dbModelo = _mapper.Map<Usuario>(modelo);
+
+                    // Hashear la contraseña antes de guardar
+                    var hasher = new PasswordHasher<Usuario>();
+                    dbModelo.Clave = hasher.HashPassword(dbModelo, modelo.Clave);
+
+                    var rspModelo = await _modeloRepositorio.Crear(dbModelo);
+
+                    if (rspModelo.IdUsuario != 0)
+                    {
+                        var mensaje = JsonSerializer.Serialize(new { Email = modelo.Correo, Nombre = modelo.Nombre });
+                        await _mensajeServicio.EnviarMensajeAsync("cola_registro_usuario", mensaje);
+                        return _mapper.Map<UsuarioDTO>(rspModelo);
+                    }
+                    else
+                    {
+                        throw new TaskCanceledException("No se puede crear");
+                    }
                 }
                 else
-                    throw new TaskCanceledException("No se puede crear");
+                {
+                    throw new TaskCanceledException("Ya existe un usuario con el correo electrónico ingresado.");
+                }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
-                throw ex;
+                throw;
             }
         }
 
@@ -79,7 +105,14 @@ namespace Ecommerce.Servicio.Implementacion
                     fromDbModelo.Nombre = modelo.Nombre;
                     fromDbModelo.Apellido = modelo.Apellido;
                     fromDbModelo.Correo = modelo.Correo;
-                    fromDbModelo.Clave = modelo.Clave;
+
+                    // Si la contraseña cambió, volver a hashearla
+                    if (!string.IsNullOrWhiteSpace(modelo.Clave))
+                    {
+                        var hasher = new PasswordHasher<Usuario>();
+                        fromDbModelo.Clave = hasher.HashPassword(fromDbModelo, modelo.Clave);
+                    }
+
                     var respuesta = await _modeloRepositorio.Editar(fromDbModelo);
 
                     if (!respuesta)
@@ -93,10 +126,10 @@ namespace Ecommerce.Servicio.Implementacion
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
+
 
         public async Task<bool> Eliminar(int id)
         {

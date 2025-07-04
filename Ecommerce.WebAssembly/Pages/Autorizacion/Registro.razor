@@ -14,8 +14,9 @@
                 <div class="card-header"><h3 class="text-center font-weight-light my-4">Crear Cuenta</h3></div>
                 <div class="card-body">
 
-                    <EditForm Model="modelo" OnValidSubmit="GuardarCambios">
+                    <EditForm Model="modelo" OnValidSubmit="GuardarCambios" OnInvalidSubmit="ValidacionFallida">
                         <DataAnnotationsValidator></DataAnnotationsValidator>
+                        
 
                         <div class="form-floating mb-3">
                             <input class="form-control" id="inputNombre" type="text" placeholder="Nombre" @bind-value="modelo.Nombre" autocomplete="off" />
@@ -66,26 +67,27 @@
     private UsuarioDTO modelo = new UsuarioDTO();
     private async Task GuardarCambios()
     {
-        if (modelo.Clave != modelo.ConfirmarClave)
-        {
-            toastService.ShowWarning("Las contraseñas no coinciden.");
-            return;
-        }
-
         modelo.Rol = "Cliente";
         var response = await _usuarioServicio.Crear(modelo);
 
         if (response.EsCorrecto)
         {
             toastService.ShowSuccess("Su cuenta ha sido creada");
-            _navServicio.NavigateTo("/login");     
-            
+            _navServicio.NavigateTo("/login");
+
             var mensaje = $"Usuario registrado: {modelo.Nombre} - {modelo.Correo}";
-            await _mensajeServicio.EnviarMensajeAsync("cola_registro_usuario",modelo.Nombre,modelo.Correo, mensaje);
+            await _mensajeServicio.EnviarMensajeAsync("cola_registro_usuario", modelo.Nombre, modelo.Correo, mensaje);
         }
         else
         {
-            toastService.ShowError("No se pudo crear su cuenta, intente más tarde.");
+            var msg = string.IsNullOrWhiteSpace(response.Mensaje)? "No se pudo crear su cuenta, intente más tarde.": response.Mensaje;
+
+            toastService.ShowError(msg);
         }
+    }
+
+    private void ValidacionFallida(EditContext context)
+    {
+        toastService.ShowWarning("Por favor, corrija los errores en el formulario.");
     }
 }

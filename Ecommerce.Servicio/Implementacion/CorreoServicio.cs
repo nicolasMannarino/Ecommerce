@@ -83,12 +83,13 @@ namespace Ecommerce.Servicio.Implementacion
             emailMessage.Subject = asunto;
             emailMessage.Body = new TextPart("html") { Text = mensaje };
 
+            
             using (var client = new SmtpClient())
             {
                 // Conectar al servidor SMTP de Gmail
                 client.Connect("smtp.gmail.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
 
-                client.Authenticate("mannarinonico@gmail.com", "bmgs erxo posy qgtu"); 
+                client.Authenticate("mannarinonico@gmail.com", "nbjh ipza xytc uyer"); 
 
                 await client.SendAsync(emailMessage);
                 client.Disconnect(true);

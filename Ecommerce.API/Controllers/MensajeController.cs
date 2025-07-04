@@ -25,7 +25,7 @@ namespace Ecommerce.API.Controllers
                 // Envía el mensaje a la cola para ser procesado y enviar el correo de bienvenida
                 await _correoServicio.EnviarCorreoBienvenida(
                            mensajeDto.Destinatario,
-                           "Bienvenido a MANIES SRL",
+                           "Bienvenido a MANIES SA",
                            $"Hola {mensajeDto.Nombre},\n\n" +
                            "¡Bienvenido a nuestra plataforma!\n\n" +
                            "Para iniciar sesión utiliza las siguientes credenciales:\n\n" +
