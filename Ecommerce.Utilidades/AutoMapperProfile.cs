@@ -33,8 +33,11 @@ namespace Ecommerce.Utilidades
             CreateMap<ProductoImagen, ProductoImagenDTO>();
             CreateMap<ProductoImagenDTO, ProductoImagen>();
 
-            CreateMap<Filtro, FiltroDTO>();
-            CreateMap<FiltroDTO, Filtro>();
+            CreateMap<Filtro, FiltroDTO>()
+                .ForMember(dest => dest.CategoriaIds, opt => opt.Ignore()); // Se setea manualmente en el servicio
+
+            CreateMap<FiltroDTO, Filtro>()
+                .ForMember(dest => dest.CategoriasFiltro, opt => opt.Ignore()); // Lo manejamos manualmente
 
             CreateMap<CategoriaFiltro, CategoriaFiltroDTO>();
             CreateMap<CategoriaFiltroDTO, CategoriaFiltro>();

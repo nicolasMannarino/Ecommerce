@@ -14,6 +14,6 @@ namespace Ecommerce.DTO
         public string? Nombre { get; set; }
         [Required(ErrorMessage = "Ingrese Tipo")]
         public string? Tipo { get; set; }
-        public List<int>? CategoriaIds { get; set; }
+        public List<int> CategoriaIds { get; set; } = new List<int>();
     }
 }

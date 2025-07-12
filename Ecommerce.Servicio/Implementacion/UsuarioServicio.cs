@@ -48,9 +48,9 @@ namespace Ecommerce.Servicio.Implementacion
                     throw new TaskCanceledException("La contraseña ingresada es incorrecta.");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -124,9 +124,9 @@ namespace Ecommerce.Servicio.Implementacion
                     throw new TaskCanceledException("No se encontraron resultados");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -150,10 +150,9 @@ namespace Ecommerce.Servicio.Implementacion
                     throw new TaskCanceledException("No se encontraron resultados");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
-                throw ex;
+                throw;
             }
         }
 
@@ -166,10 +165,9 @@ namespace Ecommerce.Servicio.Implementacion
                 List<UsuarioDTO> lista = _mapper.Map<List<UsuarioDTO>>(await consulta.ToListAsync());
                 return lista;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
-                throw ex;
+                throw; 
             }
         }
 
@@ -184,10 +182,9 @@ namespace Ecommerce.Servicio.Implementacion
                 List<UsuarioDTO> lista = _mapper.Map<List<UsuarioDTO>>(await consulta.ToListAsync());
                 return lista;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
-                throw ex;
+                throw; 
             }
         }
 
@@ -203,10 +200,9 @@ namespace Ecommerce.Servicio.Implementacion
                 else
                     throw new TaskCanceledException("No se encontraron coincidencias");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
-                throw ex;
+                throw; 
             }
         }
     }

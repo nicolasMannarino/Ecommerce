@@ -121,5 +121,23 @@ namespace Ecommerce.API.Controllers
             }
             return Ok(response);
         }
+
+        [HttpGet("FiltrosPorCategoria/{nombreCategoria}")]
+        public async Task<IActionResult> FiltrosPorCategoria(string nombreCategoria)
+        {
+            var response = new ResponseDTO<List<FiltroDTO>>();
+            try
+            {
+                response.EsCorrecto = true;
+                response.Resultado = await _productoServicio.ObtenerFiltrosPorCategoria(nombreCategoria);
+            }
+            catch (Exception ex)
+            {
+                response.EsCorrecto = false;
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
+
     }
 }

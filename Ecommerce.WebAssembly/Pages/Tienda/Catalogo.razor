@@ -4,6 +4,7 @@
 @inject ICategoriaServicio categoriaServicio
 @inject IProductoServicio productoServicio
 @inject NavigationManager _navServicio
+@inject IProductoServicio productoServicio
 
 <div class="row justify-content-center mt-3 mb-4">
 
@@ -21,9 +22,6 @@
         </div>
     </div>
 </div>
-
-
-
 
 <div class="row">
     <div class="col-sm-3">
@@ -54,7 +52,7 @@
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="categoria" id="Todos" value="Todos"
                                @onchange="RadioSeleccion"
-                               checked=@(categoriaSeleccionada.Equals("Todos"))>
+                               checked=@(categoriaSeleccionada.Equals("Todos", StringComparison.OrdinalIgnoreCase))>
                         <label class="form-check-label" for="Todos">
                             Todos
                         </label>
@@ -70,7 +68,6 @@
                                 @item.Nombre
                             </label>
                         </div>
-
                     }
                 }
                 else
@@ -84,40 +81,28 @@
         </div>
         <br />
         <div class="card">
-            <div class="card-header text-white bg-dark">
-                Filtros
-            </div>
-            <div class="card-body">
-                @if (listaCategoria != null)
-                {
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="categoria" id="Todos" value="Todos"
-                               @onchange="RadioSeleccion"
-                               checked=@(categoriaSeleccionada.Equals("Todos"))>
-                        <label class="form-check-label" for="Todos">
-                            Todos
-                        </label>
-                    </div>
-
-                    @foreach (var item in listaCategoria)
+            <div class="card">
+                <div class="card-header text-white bg-dark">
+                    Filtros
+                </div>
+                <div class="card-body">
+                    @if (listaFiltros != null && listaFiltros.Any())
                     {
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="categoria" id="@item.IdCategoria" value="@item.Nombre"
-                                   @onchange="RadioSeleccion"
-                                   checked=@(categoriaSeleccionada.Equals(item.Nombre, StringComparison.OrdinalIgnoreCase))>
-                            <label class="form-check-label" for="@item.IdCategoria">
-                                @item.Nombre
-                            </label>
-                        </div>
-
+                        @foreach (var filtro in listaFiltros)
+                        {
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="@filtro.IdFiltro" />
+                                <label class="form-check-label" for="@filtro.IdFiltro">
+                                    @filtro.Nombre
+                                </label>
+                            </div>
+                        }
                     }
-                }
-                else
-                {
-                    <div class="spinner-border" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                }
+                    else
+                    {
+                        <span class="text-muted">No hay filtros disponibles para esta categoría.</span>
+                    }
+                </div>
             </div>
 
         </div>
@@ -186,6 +171,26 @@
     private string ordenarPor = "asc";
     private decimal? precioMinimo = null;
     private decimal? precioMaximo = null;
+    private List<FiltroDTO>? listaFiltros = null;
+
+    private async Task ObtenerFiltros()
+    {
+        if (string.IsNullOrEmpty(categoriaSeleccionada) || categoriaSeleccionada.Equals("Todos", StringComparison.OrdinalIgnoreCase))
+        {
+            listaFiltros = new List<FiltroDTO>();
+            return;
+        }
+
+        var response = await productoServicio.ObtenerFiltrosPorCategoria(categoriaSeleccionada);
+        if (response.EsCorrecto)
+        {
+            listaFiltros = (List<FiltroDTO>)response.Resultado!;
+        }
+        else
+        {
+            listaFiltros = new List<FiltroDTO>();
+        }
+    }
 
     private async Task ObtenerCategorias(string Valor = "")
     {
@@ -261,9 +266,10 @@
 
     private async Task RadioSeleccion(ChangeEventArgs args)
     {
-        categoriaSeleccionada = args.Value.ToString();
+        categoriaSeleccionada = args.Value?.ToString() ?? "Todos";
         buscar = "";
         await ObtenerCatalogo();
+        await ObtenerFiltros();
     }
 
     protected override async Task OnInitializedAsync()
@@ -271,6 +277,7 @@
         try
         {
             await ObtenerCategorias();
+            await ObtenerFiltros();
             await ObtenerCatalogo();
         }
         catch (Exception ex)

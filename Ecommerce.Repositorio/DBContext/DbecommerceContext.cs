@@ -175,6 +175,8 @@ public partial class DbecommerceContext : DbContext
                 .HasConstraintName("FK__CategoriaFiltro__IdCategoria");
         });
 
+
+
         OnModelCreatingPartial(modelBuilder);
     }
 

@@ -13,10 +13,17 @@ namespace Ecommerce.WebAssembly.Servicios.Implementacion
             _httpClient = httpClient;
         }
 
+
         public async Task<ResponseDTO<List<ProductoDTO>>> Catalogo(string categoria, string buscar)
         {
             return await _httpClient.GetFromJsonAsync<ResponseDTO<List<ProductoDTO>>>($"Producto/Catalogo/{categoria}/{buscar}");
         }
+
+        public async Task<ResponseDTO<List<FiltroDTO>>> ObtenerFiltrosPorCategoria(string nombreCategoria)
+        {
+            return await _httpClient.GetFromJsonAsync<ResponseDTO<List<FiltroDTO>>>($"Producto/FiltrosPorCategoria/{nombreCategoria}");
+        }
+
 
         public async Task<ResponseDTO<ProductoDTO>> Crear(ProductoDTO modelo)
         {
