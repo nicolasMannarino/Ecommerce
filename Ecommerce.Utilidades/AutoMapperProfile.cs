@@ -42,6 +42,8 @@ namespace Ecommerce.Utilidades
             CreateMap<CategoriaFiltro, CategoriaFiltroDTO>();
             CreateMap<CategoriaFiltroDTO, CategoriaFiltro>();
 
+            CreateMap<ProductoFiltroValor, ProductoFiltroValorDTO>().ReverseMap();
+
 
         }
     }

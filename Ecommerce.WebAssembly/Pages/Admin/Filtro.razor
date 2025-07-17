@@ -33,7 +33,7 @@
 
                 <div class="input-group mt-3">
                     <span class="input-group-text bg-light">Tipo</span>
-                    <select class="form-select" @bind="modelo.Tipo">
+                    <select class="form-select" @bind="modelo.TipoFiltro ">
                         <option value="">-- Seleccionar tipo --</option>
                         <option value="Texto">Texto</option>
                         <option value="Numero">Número</option>
@@ -41,7 +41,7 @@
                         <option value="Fecha">Fecha</option>
                     </select>
                 </div>
-                <ValidationMessage For="@(() => modelo.Tipo)" />
+                <ValidationMessage For="@(() => modelo.TipoFiltro )" />
 
                 <div class="mt-4">
                     <label class="form-label">Categorías asociadas</label>

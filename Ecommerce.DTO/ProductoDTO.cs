@@ -26,5 +26,6 @@ namespace Ecommerce.DTO
         public List<ProductoImagenDTO>? Imagenes { get; set; } 
         public DateTime? FechaCreacion { get; set; }
         public virtual CategoriaDTO? IdCategoriaNavigation { get; set; }
+        public List<ProductoFiltroValorDTO> Filtros { get; set; } = new();
     }
 }

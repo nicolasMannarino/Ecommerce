@@ -139,5 +139,27 @@ namespace Ecommerce.API.Controllers
             return Ok(response);
         }
 
+        [HttpPost("CatalogoConFiltros")]
+        public async Task<IActionResult> CatalogoConFiltros([FromBody] CatalogoFiltroRequestDTO request)
+        {
+            var response = new ResponseDTO<List<ProductoDTO>>();
+            try
+            {
+                var categoria = request.Categoria?.ToLower() == "todos" ? "" : request.Categoria;
+                var buscar = string.IsNullOrWhiteSpace(request.Buscar) ? "" : request.Buscar;
+                var filtros = request.Filtros ?? new List<ProductoFiltroValorDTO>();
+
+                var resultado = await _productoServicio.CatalogoConFiltros(categoria, buscar, filtros);
+
+                return Ok(resultado);
+            }
+            catch (Exception ex)
+            {
+                response.EsCorrecto = false;
+                response.Mensaje = ex.Message;
+                return Ok(response);
+            }
+        }
+
     }
 }

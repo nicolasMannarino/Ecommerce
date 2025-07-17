@@ -4,14 +4,12 @@
 @inject ICategoriaServicio categoriaServicio
 @inject IProductoServicio productoServicio
 @inject NavigationManager _navServicio
-@inject IProductoServicio productoServicio
 
 <div class="row justify-content-center mt-3 mb-4">
-
     <div class="col-sm-6 col-md-8 col-xl-9">
         <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Buscar producto..." @bind-value="buscar">
-            <button class="btn btn-outline-secondary" type="button" @onclick="(async () => await  ObtenerCatalogo())">
+            <input type="text" class="form-control" placeholder="Buscar producto..." @bind="buscar">
+            <button class="btn btn-outline-secondary" type="button" @onclick="ObtenerCatalogo">
                 <i class="oi oi-magnifying-glass"></i>
             </button>
             <select class="form-select ms-2" @onchange="OrdenarPorSeleccion">
@@ -25,37 +23,32 @@
 
 <div class="row">
     <div class="col-sm-3">
-        <div class="card">
-            <div class="card-header text-white bg-dark">
-                Rango de Precio
-            </div>
+        <!-- Filtros laterales -->
+        <div class="card mb-3">
+            <div class="card-header text-white bg-dark">Rango de Precio</div>
             <div class="card-body">
                 <div class="input-group mb-3">
                     <span class="input-group-text">Min</span>
-                    <input type="number" class="form-control" @bind-value="precioMinimo" step="1" min="0" placeholder="0">
+                    <input type="number" class="form-control" @bind="precioMinimo" step="1" min="0" placeholder="0">
                 </div>
                 <div class="input-group mb-3">
                     <span class="input-group-text">Max</span>
-                    <input type="number" class="form-control" @bind-value="precioMaximo" step="1" min="0" placeholder="1000">
+                    <input type="number" class="form-control" @bind="precioMaximo" step="1" min="0" placeholder="1000">
                 </div>
                 <button class="btn btn-primary" @onclick="ObtenerCatalogo">Filtrar</button>
             </div>
         </div>
-        <br />
-        <div class="card">
-            <div class="card-header text-white bg-dark">
-                Categorias
-            </div>
+
+        <div class="card mb-3">
+            <div class="card-header text-white bg-dark">Categorías</div>
             <div class="card-body">
                 @if (listaCategoria != null)
                 {
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="categoria" id="Todos" value="Todos"
                                @onchange="RadioSeleccion"
-                               checked=@(categoriaSeleccionada.Equals("Todos", StringComparison.OrdinalIgnoreCase))>
-                        <label class="form-check-label" for="Todos">
-                            Todos
-                        </label>
+                               checked="@categoriaSeleccionada.Equals("Todos", StringComparison.OrdinalIgnoreCase)">
+                        <label class="form-check-label" for="Todos">Todos</label>
                     </div>
 
                     @foreach (var item in listaCategoria)
@@ -63,10 +56,8 @@
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="categoria" id="@item.IdCategoria" value="@item.Nombre"
                                    @onchange="RadioSeleccion"
-                                   checked=@(categoriaSeleccionada.Equals(item.Nombre, StringComparison.OrdinalIgnoreCase))>
-                            <label class="form-check-label" for="@item.IdCategoria">
-                                @item.Nombre
-                            </label>
+                                   checked="@categoriaSeleccionada.Equals(item.Nombre, StringComparison.OrdinalIgnoreCase)">
+                            <label class="form-check-label" for="@item.IdCategoria">@item.Nombre</label>
                         </div>
                     }
                 }
@@ -77,36 +68,45 @@
                     </div>
                 }
             </div>
-
         </div>
-        <br />
+
         <div class="card">
-            <div class="card">
-                <div class="card-header text-white bg-dark">
-                    Filtros
-                </div>
-                <div class="card-body">
-                    @if (listaFiltros != null && listaFiltros.Any())
-                    {
-                        @foreach (var filtro in listaFiltros)
+            <div class="card-header text-white bg-dark">Filtros</div>
+            <div class="card-body">
+                @foreach (var filtro in listaFiltros)
+                {
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">@filtro.Nombre</label>
+
+                        @if (filtro.TipoFiltro is "checkbox" or "ambos")
                         {
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="@filtro.IdFiltro" />
-                                <label class="form-check-label" for="@filtro.IdFiltro">
-                                    @filtro.Nombre
-                                </label>
+                            @foreach (var opcion in filtro.OpcionesDisponibles)
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox"
+                                           id="@($"{filtro.IdFiltro}_{opcion}")"
+                                           checked="@filtro.ValoresSeleccionados.Contains(opcion)"
+                                           @onchange="e => CheckboxFiltroChanged(filtro, opcion, e.Value)">
+                                    <label class="form-check-label" for="@($"{filtro.IdFiltro}_{opcion}")">@opcion</label>
+                                </div>
+                            }
+                        }
+
+                        @if (filtro.TipoFiltro is "rango" or "ambos")
+                        {
+                            <div class="input-group mb-2 mt-2">
+                                <span class="input-group-text">Desde</span>
+                                <input type="number" class="form-control" @bind="filtro.ValorDesde" min="0" step="any" />
+                            </div>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Hasta</span>
+                                <input type="number" class="form-control" @bind="filtro.ValorHasta" min="0" step="any" />
                             </div>
                         }
-                    }
-                    else
-                    {
-                        <span class="text-muted">No hay filtros disponibles para esta categoría.</span>
-                    }
-                </div>
+                    </div>
+                }
             </div>
-
         </div>
-
     </div>
 
     <div class="col-sm-9">
@@ -117,37 +117,35 @@
                 {
                     <div class="col mb-5">
                         <div class="card h-100">
-                            <!-- Sale badge-->
-                            @if (DateTime.Now < item.FechaCreacion.Value.AddDays(30))
+                            @if (DateTime.Now < item.FechaCreacion?.AddDays(30))
                             {
                                 <div class="badge bg-primary text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Nuevo</div>
                             }
-                            <!-- Product image
-                            <img class="card-img-top border-dark border-1" src="@item.Imagen" style="width:100%;height:250px">-->
-                            @if (item.Imagenes != null && item.Imagenes.Any())
+
+                            @if (item.Imagenes?.Any() == true)
                             {
                                 <img class="card-img-top border-dark border-1" src="@item.Imagenes.First().RutaImagen" alt="Imagen del producto">
                             }
-                            <!-- Product details-->
+
                             <div class="card-body p-4">
                                 <div class="text-center">
-                                    <!-- Product name-->
                                     <h5 class="fw-bolder">@item.Nombre</h5>
-                                    <!-- Product price-->
                                     @if (item.PrecioOferta != 0 && item.PrecioOferta < item.Precio)
                                     {
-                                        <span class="text-danger text-decoration-line-through">$@string.Format("{0:N2}", item.Precio)</span>
-                                        <span>$@string.Format("{0:N2}", item.PrecioOferta)</span>
+                                        <span class="text-danger text-decoration-line-through">$@item.Precio</span>
+                                        <span>$@item.PrecioOferta</span>
                                     }
                                     else
                                     {
-                                        <span>$@string.Format("{0:N2}", item.Precio)</span>
+                                        <span>$@item.Precio</span>
                                     }
                                 </div>
                             </div>
-                            <!-- Product actions-->
+
                             <div class="card-footer p-3 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="/detalle/@item.IdProducto">Ver producto</a></div>
+                                <div class="text-center">
+                                    <a class="btn btn-outline-dark mt-auto" href="/detalle/@item.IdProducto">Ver producto</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -164,133 +162,143 @@
 </div>
 
 @code {
-    private List<ProductoDTO>? listaProducto = null;
-    private List<CategoriaDTO>? listaCategoria = null;
+    private List<ProductoDTO>? listaProducto = new();
+    private List<CategoriaDTO>? listaCategoria = new();
     private string buscar = "";
     private string categoriaSeleccionada = "Todos";
     private string ordenarPor = "asc";
     private decimal? precioMinimo = null;
     private decimal? precioMaximo = null;
-    private List<FiltroDTO>? listaFiltros = null;
+    private List<FiltroDTO>? listaFiltros = new();
 
     private async Task ObtenerFiltros()
     {
-        if (string.IsNullOrEmpty(categoriaSeleccionada) || categoriaSeleccionada.Equals("Todos", StringComparison.OrdinalIgnoreCase))
+        if (categoriaSeleccionada.Equals("Todos", StringComparison.OrdinalIgnoreCase))
         {
-            listaFiltros = new List<FiltroDTO>();
+            listaFiltros = new();
             return;
         }
 
         var response = await productoServicio.ObtenerFiltrosPorCategoria(categoriaSeleccionada);
-        if (response.EsCorrecto)
-        {
-            listaFiltros = (List<FiltroDTO>)response.Resultado!;
-        }
-        else
-        {
-            listaFiltros = new List<FiltroDTO>();
-        }
+        listaFiltros = response.EsCorrecto
+            ? (List<FiltroDTO>)response.Resultado!
+            : new();
     }
 
-    private async Task ObtenerCategorias(string Valor = "")
+    private async Task ObtenerCategorias()
     {
-        var response = await categoriaServicio.Lista(Valor);
-        if (response.EsCorrecto)
-        {
-            listaCategoria = (List<CategoriaDTO>)response.Resultado!;
-        }
-        else
-        {
-            listaCategoria = new List<CategoriaDTO>();
-        }
+        var response = await categoriaServicio.Lista("");
+        listaCategoria = response.EsCorrecto
+            ? (List<CategoriaDTO>)response.Resultado!
+            : new();
     }
 
     private async Task ObtenerCatalogo()
     {
-        var response = await productoServicio.Catalogo(categoriaSeleccionada, buscar);
+        var filtrosSeleccionados = new List<ProductoFiltroValorDTO>();
+
+        if (listaFiltros != null)
+        {
+            foreach (var filtro in listaFiltros)
+            {
+                if (filtro.EsRangoNumerico)
+                {
+                    if (filtro.ValorDesde.HasValue)
+                    {
+                        filtrosSeleccionados.Add(new ProductoFiltroValorDTO
+                        {
+                            IdFiltro = filtro.IdFiltro,
+                            Valor = $"Desde:{filtro.ValorDesde.Value}"
+                        });
+                    }
+                    if (filtro.ValorHasta.HasValue)
+                    {
+                        filtrosSeleccionados.Add(new ProductoFiltroValorDTO
+                        {
+                            IdFiltro = filtro.IdFiltro,
+                            Valor = $"Hasta:{filtro.ValorHasta.Value}"
+                        });
+                    }
+                }
+                else if (filtro.ValoresSeleccionados.Any())
+                {
+                    filtrosSeleccionados.Add(new ProductoFiltroValorDTO
+                    {
+                        IdFiltro = filtro.IdFiltro,
+                        Valor = string.Join(",", filtro.ValoresSeleccionados)
+                    });
+                }
+                else if (!string.IsNullOrWhiteSpace(filtro.ValorUnico))
+                {
+                    filtrosSeleccionados.Add(new ProductoFiltroValorDTO
+                    {
+                        IdFiltro = filtro.IdFiltro,
+                        Valor = filtro.ValorUnico
+                    });
+                }
+            }
+        }
+
+        var response = await productoServicio.CatalogoConFiltros(categoriaSeleccionada, buscar, filtrosSeleccionados);
+
         if (response.EsCorrecto)
         {
             listaProducto = (List<ProductoDTO>)response.Resultado!;
 
+            // Aplicar filtros de precios (puede ser redundante si también filtras en backend)
             if (precioMinimo.HasValue || precioMaximo.HasValue)
             {
                 listaProducto = listaProducto.Where(p =>
                 {
-                    decimal precioActual = p.PrecioOferta.HasValue && p.PrecioOferta > 0
-                                            ? p.PrecioOferta.Value
-                                            : p.Precio ?? decimal.MaxValue;
-
-                    bool cumpleMinimo = !precioMinimo.HasValue || precioActual >= precioMinimo.Value;
-                    bool cumpleMaximo = !precioMaximo.HasValue || precioActual <= precioMaximo.Value;
-
-                    return cumpleMinimo && cumpleMaximo;
+                    var precio = p.PrecioOferta > 0 ? p.PrecioOferta.Value : p.Precio ?? decimal.MaxValue;
+                    return (!precioMinimo.HasValue || precio >= precioMinimo.Value)
+                        && (!precioMaximo.HasValue || precio <= precioMaximo.Value);
                 }).ToList();
             }
 
-            if (ordenarPor == "ascendente")
+            // Aplicar ordenamiento
+            listaProducto = ordenarPor switch
             {
-                // Ordena por el precio más bajo, considerando PrecioOferta si está presente y es mayor a 0
-                listaProducto = listaProducto
-                    .OrderBy(p => p.PrecioOferta.HasValue && p.PrecioOferta > 0
-                                  ? Math.Min(p.Precio ?? decimal.MaxValue, p.PrecioOferta.Value)
-                                  : p.Precio ?? decimal.MaxValue)
-                    .ToList();
-            }
-            else if (ordenarPor == "descendente")
-            {
-                // Ordena por el precio más alto, considerando PrecioOferta si está presente y es mayor a 0
-                listaProducto = listaProducto
-                    .OrderByDescending(p => p.PrecioOferta.HasValue && p.PrecioOferta > 0
-                                            ? Math.Min(p.Precio ?? decimal.MinValue, p.PrecioOferta.Value)
-                                            : p.Precio ?? decimal.MinValue)
-                    .ToList();
-            }
-            else if (ordenarPor == "mejorDescuento")
-            {
-                // Ordena primero por descuento, luego por precio en caso de que no tenga descuento
-                listaProducto = listaProducto
-                    .OrderByDescending(p => (p.PrecioOferta.HasValue && p.PrecioOferta > 0)
-                                            ? (p.Precio - p.PrecioOferta.Value) 
-                                            : decimal.MinValue) // Los productos sin descuento irán al final
-                    .ThenBy(p => p.Precio) 
-                    .ToList();
-            }
+                "ascendente" => listaProducto.OrderBy(p => p.PrecioOferta > 0 ? p.PrecioOferta : p.Precio).ToList(),
+                "descendente" => listaProducto.OrderByDescending(p => p.PrecioOferta > 0 ? p.PrecioOferta : p.Precio).ToList(),
+                "mejorDescuento" => listaProducto.OrderByDescending(p => p.Precio - (p.PrecioOferta ?? p.Precio)).ToList(),
+                _ => listaProducto
+            };
+        }
+    }
+    
+    private void CheckboxFiltroChanged(FiltroDTO filtro, string opcion, object? checkedValue)
+    {
+        bool isChecked = checkedValue is bool b && b;
+        if (isChecked)
+        {
+            if (!filtro.ValoresSeleccionados.Contains(opcion))
+                filtro.ValoresSeleccionados.Add(opcion);
         }
         else
         {
-            listaProducto = new List<ProductoDTO>();
+            filtro.ValoresSeleccionados.Remove(opcion);
         }
     }
-
-
 
     private async Task RadioSeleccion(ChangeEventArgs args)
     {
         categoriaSeleccionada = args.Value?.ToString() ?? "Todos";
         buscar = "";
-        await ObtenerCatalogo();
         await ObtenerFiltros();
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            await ObtenerCategorias();
-            await ObtenerFiltros();
-            await ObtenerCatalogo();
-        }
-        catch (Exception ex)
-        {
-            // Aquí podrías utilizar BlazoredToast para mostrar un mensaje de error si lo deseas
-            Console.WriteLine($"Error en OnInitializedAsync: {ex.Message}");
-        }
+        await ObtenerCatalogo();
     }
 
     private async Task OrdenarPorSeleccion(ChangeEventArgs args)
     {
-        ordenarPor = args.Value.ToString();
+        ordenarPor = args.Value?.ToString() ?? "asc";
         await ObtenerCatalogo();
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+        await ObtenerCategorias();
+        await ObtenerFiltros();
+        await ObtenerCatalogo();
+    }
 }

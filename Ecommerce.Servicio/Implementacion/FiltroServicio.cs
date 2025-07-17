@@ -65,7 +65,7 @@ namespace Ecommerce.Servicio.Implementacion
                 if (fromDbModelo != null)
                 {
                     fromDbModelo.Nombre = modelo.Nombre;
-                    fromDbModelo.Tipo = modelo.Tipo;
+                    fromDbModelo.TipoFiltro = modelo.TipoFiltro;
 
                     var respuesta = await _modeloRepositorio.Editar(fromDbModelo);
 

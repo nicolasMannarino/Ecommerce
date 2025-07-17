@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ecommerce.Modelo;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -12,7 +13,9 @@ namespace Ecommerce.Modelo
         [Key]
         public int IdFiltro { get; set; }
         public string? Nombre { get; set; }
-        public string? Tipo { get; set; }
+        public string? TipoFiltro { get; set; }
         public virtual ICollection<CategoriaFiltro> CategoriasFiltro { get; set; } = new List<CategoriaFiltro>();
+        public ICollection<FiltroOpcion> FiltroOpciones { get; set; }
     }
 }
+

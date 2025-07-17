@@ -16,12 +16,14 @@ public partial class DbecommerceContext : DbContext
     {
     }
 
+
     public virtual DbSet<Categoria> Categoria { get; set; }
     public virtual DbSet<DetalleVenta> DetalleVenta { get; set; }
     public virtual DbSet<Producto> Productos { get; set; }
     public virtual DbSet<Usuario> Usuarios { get; set; }
     public virtual DbSet<Venta> Venta { get; set; }
     public virtual DbSet<Filtro> Filtro { get; set; }
+    public virtual DbSet<FiltroOpcion> FiltroOpcion { get; set; }
 
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
@@ -33,6 +35,39 @@ public partial class DbecommerceContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<FiltroOpcion>(entity =>
+        {
+            entity.ToTable("FiltroOpcion");
+
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Valor).IsRequired();
+
+            entity.HasOne(e => e.Filtro)
+                  .WithMany(f => f.FiltroOpciones)
+                  .HasForeignKey(e => e.IdFiltro)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Filtro>()
+            .HasMany(f => f.FiltroOpciones)
+            .WithOne(fo => fo.Filtro)
+            .HasForeignKey(fo => fo.IdFiltro)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<ProductoFiltroValor>()
+            .HasKey(p => new { p.IdProducto, p.IdFiltro });
+
+        modelBuilder.Entity<ProductoFiltroValor>()
+            .HasOne(pfv => pfv.Producto)
+            .WithMany(p => p.ProductoFiltroValores)
+            .HasForeignKey(pfv => pfv.IdProducto);
+
+        modelBuilder.Entity<ProductoFiltroValor>()
+            .HasOne(pfv => pfv.Filtro)
+            .WithMany()
+            .HasForeignKey(pfv => pfv.IdFiltro);
+
         modelBuilder.Entity<Categoria>(entity =>
         {
             entity.HasKey(e => e.IdCategoria).HasName("PK__Categori__A3C02A1021B329DD");
@@ -144,7 +179,7 @@ public partial class DbecommerceContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
 
-            entity.Property(e => e.Tipo)
+            entity.Property(e => e.TipoFiltro)
                 .HasMaxLength(50)
                 .IsUnicode(false);
 
@@ -174,6 +209,7 @@ public partial class DbecommerceContext : DbContext
                 .HasForeignKey(cf => cf.IdCategoria)
                 .HasConstraintName("FK__CategoriaFiltro__IdCategoria");
         });
+
 
 
 

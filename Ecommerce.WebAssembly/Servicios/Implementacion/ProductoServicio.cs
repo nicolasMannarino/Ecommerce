@@ -60,5 +60,19 @@ namespace Ecommerce.WebAssembly.Servicios.Implementacion
         {
             return await _httpClient.GetFromJsonAsync<ResponseDTO<ProductoDTO>>($"Producto/Obtener/{id}");
         }
+
+        public async Task<ResponseDTO<List<ProductoDTO>>> CatalogoConFiltros(string categoria, string buscar, List<ProductoFiltroValorDTO>? filtros)
+        {
+            var body = new CatalogoFiltroRequestDTO
+            {
+                Categoria = categoria,
+                Buscar = buscar,
+                Filtros = filtros ?? new List<ProductoFiltroValorDTO>()
+            };
+
+            var response = await _httpClient.PostAsJsonAsync("Producto/CatalogoConFiltros", body);
+            var result = await response.Content.ReadFromJsonAsync<ResponseDTO<List<ProductoDTO>>>();
+            return result!;
+        }
     }
 }

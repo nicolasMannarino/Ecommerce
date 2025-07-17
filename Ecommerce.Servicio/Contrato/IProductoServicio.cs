@@ -16,6 +16,7 @@ namespace Ecommerce.Servicio.Contrato
         Task<bool> Editar(ProductoDTO modelo);
         Task<bool> Eliminar(int id);
         Task<List<FiltroDTO>> ObtenerFiltrosPorCategoria(string nombreCategoria);
+        Task<ResponseDTO<List<ProductoDTO>>> CatalogoConFiltros(string categoria, string buscar, List<ProductoFiltroValorDTO> filtros);
 
     }
 }
