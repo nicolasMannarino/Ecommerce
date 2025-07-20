@@ -4,67 +4,114 @@
 @inject ICategoriaServicio categoriaServicio
 @inject IProductoServicio productoServicio
 @inject IToastService toastService
+@inject IFiltroServicio filtroServicio
 @inject NavigationManager _navServicio
 
-@attribute [Authorize(Roles = "Administrador")];
-
+@attribute [Authorize(Roles = "Administrador")]
 
 <div class="row justify-content-center  mt-3">
     <p class="col-sm-12 col-md-8 col-xl-10 h4 mt-2">@Titulo</p>
 </div>
 <div class="row justify-content-center  mt-3">
     <div class="col-sm-12 col-md-8 col-xl-10">
-
         <EditForm Model="modelo" OnValidSubmit="GuardarCambios">
-            <DataAnnotationsValidator></DataAnnotationsValidator>
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <!-- Nombre -->
             <div class="input-group">
-                <span class="input-group-text bg-light" id="basic-addon3">Nombre</span>
-                <input type="text" class="form-control" @bind-value="modelo.Nombre">
+                <span class="input-group-text bg-light">Nombre</span>
+                <input type="text" class="form-control" @bind-value="modelo.Nombre" />
             </div>
-            <ValidationMessage For="@(()=>modelo.Nombre)" />
+            <ValidationMessage For="@(() => modelo.Nombre)" />
 
-            <div class="input-group  mt-3">
-                <span class="input-group-text bg-light">Descripcion</span>
-                <textarea class="form-control" @bind="modelo.Descripcion"></textarea>
-
-            </div>
-            <ValidationMessage For="@(()=>modelo.Descripcion)" />
-
+            <!-- Descripción -->
             <div class="input-group mt-3">
-                <label class="input-group-text bg-light" for="inputGroupSelect01">Categoria</label>
-                <select class="form-select" value="@modelo.IdCategoria" @onchange="CambiarCategoria">
+                <span class="input-group-text bg-light">Descripción</span>
+                <textarea class="form-control" @bind="modelo.Descripcion"></textarea>
+            </div>
+            <ValidationMessage For="@(() => modelo.Descripcion)" />
+
+            <!-- Categoría -->
+            <div class="input-group mt-3">
+                <label class="input-group-text bg-light">Categoría</label>
+                <select class="form-select" @onchange="CambiarCategoria">
                     @foreach (var item in listaCategoria)
                     {
-                        <option value="@item.IdCategoria">@item.Nombre</option>
+                        <option value="@item.IdCategoria" selected="@(item.IdCategoria == modelo.IdCategoria)">
+                            @item.Nombre
+                        </option>
                     }
                 </select>
             </div>
 
-            <div class="input-group mt-3">
-                <span class="input-group-text bg-light" id="basic-addon3">Precio</span>
-                <input type="number" class="form-control" @bind-value="modelo.Precio">
-            </div>
-            <ValidationMessage For="@(()=>modelo.Precio)" />
+            <!-- Filtros dinámicos -->
+            @if (filtrosDisponibles.Any())
+            {
+                <div class="mt-4 ms-3">
+                    <h5 class="mb-3">Filtros adicionales</h5>
+                    @foreach (var filtro in filtrosDisponibles)
+                    {
+                        <div class="input-group mt-3">
+                            <span class="input-group-text bg-light">@filtro.Nombre</span>
 
-            <div class="input-group mt-3">
-                <span class="input-group-text bg-light" id="basic-addon3">Precio Oferta</span>
-                <input type="number" class="form-control" @bind-value="modelo.PrecioOferta">
-            </div>
-            <ValidationMessage For="@(()=>modelo.PrecioOferta)" />
+                            @if (filtro.EsRangoNumerico)
+                            {
+                                <input type="number" placeholder="Desde" class="form-control me-1"
+                                       @bind="filtro.ValorDesde" />
+                                <input type="number" placeholder="Hasta" class="form-control"
+                                       @bind="filtro.ValorHasta" />
+                            }
+                            else if (filtro.OpcionesDisponibles != null && filtro.OpcionesDisponibles.Any())
+                            {
+                                <select class="form-select" @bind="filtro.ValorUnico">
+                                    <option value="">Seleccione</option>
+                                    @foreach (var opcion in filtro.OpcionesDisponibles)
+                                    {
+                                        <option value="@opcion">@opcion</option>
+                                    }
+                                </select>
+                            }
+                            else
+                            {
+                                <input type="text" class="form-control" @bind="filtro.ValorUnico" />
+                            }
+                        </div>
+                    }
+                </div>
+            }
 
+
+            <!-- Precio -->
             <div class="input-group mt-3">
-                <span class="input-group-text bg-light" id="basic-addon3">Cantidad</span>
-                <input type="number" class="form-control" @bind-value="modelo.Cantidad">
+                <span class="input-group-text bg-light">Precio</span>
+                <input type="number" class="form-control" @bind-value="modelo.Precio" />
             </div>
-            <ValidationMessage For="@(()=>modelo.Cantidad)" />
-            <div>
+            <ValidationMessage For="@(() => modelo.Precio)" />
+
+            <!-- Precio oferta -->
+            <div class="input-group mt-3">
+                <span class="input-group-text bg-light">Precio Oferta</span>
+                <input type="number" class="form-control" @bind-value="modelo.PrecioOferta" />
+            </div>
+            <ValidationMessage For="@(() => modelo.PrecioOferta)" />
+
+            <!-- Cantidad -->
+            <div class="input-group mt-3">
+                <span class="input-group-text bg-light">Cantidad</span>
+                <input type="number" class="form-control" @bind-value="modelo.Cantidad" />
+            </div>
+            <ValidationMessage For="@(() => modelo.Cantidad)" />
+
+            <!-- Imágenes -->
+            <div class="mt-3">
                 <InputFile multiple OnChange="Cambio"></InputFile>
             </div>
-            <br />
-            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+
+            <div style="display: flex; flex-wrap: wrap; gap: 10px;" class="mt-2">
                 @foreach (var im in imagenes)
                 {
-                    <div style="position: relative; display: inline-block;">
+                    <div style="position: relative;">
                         <img src="@im" width="200" height="200" style="border: 1px solid #ddd;" />
                         <button type="button" @onclick="(() => EliminarImagen(im))"
                                 style="position: absolute; top: 5px; right: 5px; background-color: red; color: white; border: none; cursor: pointer; border-radius: 50%;">
@@ -73,8 +120,6 @@
                     </div>
                 }
             </div>
-            <ValidationMessage For="@(() => modelo.Imagenes)" />
-
 
             <div class="mt-3">
                 <button type="submit" class="btn btn-primary" style="width:130px">@boton</button>
@@ -82,71 +127,19 @@
             </div>
         </EditForm>
     </div>
-
 </div>
 
 @code {
     [Parameter]
     public int Id { get; set; }
+
     private string Titulo = "Nuevo Producto";
     private string boton = "Crear";
 
-    private List<CategoriaDTO> listaCategoria = new List<CategoriaDTO>();
-    private ProductoDTO modelo = new ProductoDTO();
-
-    private List<string> imagenes = new List<string>();
-
-    async Task Cambio(InputFileChangeEventArgs e)
-    {
-        // Inicializa la lista de imágenes si es null
-        if (modelo.Imagenes == null)
-        {
-            modelo.Imagenes = new List<ProductoImagenDTO>();
-        }
-
-        // Procesar cada archivo seleccionado
-        foreach (var file in e.GetMultipleFiles())
-        {
-            // Verifica si la extensión del archivo es válida
-            var fileInfo = new FileInfo(file.Name);
-            if (fileInfo.Extension.ToLower().Contains(".jpg") || fileInfo.Extension.ToLower().Contains(".png"))
-            {
-                // Redimensiona y convierte la imagen a base64
-                var format = $"image/{fileInfo.Extension.Replace(".", "")}";
-                var resizeImage = await file.RequestImageFileAsync(format, 450, 300);
-                var buffer = new byte[resizeImage.Size];
-                await resizeImage.OpenReadStream().ReadAsync(buffer);
-                var imageData = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
-
-                // Agrega la imagen a la lista de previsualización
-                imagenes.Add(imageData);
-
-                // Determina el índice de la nueva imagen
-                int index = modelo.Imagenes.Count;
-
-                // Agrega la imagen a la lista del modelo
-                modelo.Imagenes.Add(new ProductoImagenDTO
-                    {
-                        RutaImagen = imageData,
-                        NumeroImagen = index + 1 // Asignar un número de imagen basado en el índice
-                    });
-            }
-            else
-            {
-                toastService.ShowWarning("La extensión de la imagen debe ser '.png' o '.jpg'.");
-            }
-        }
-    }
-
-    void EliminarImagen(string imagen)
-    {
-        int index = imagenes.IndexOf(imagen);
-        if (index >= 0)
-        {
-            imagenes.RemoveAt(index);
-            modelo.Imagenes.RemoveAt(index);
-        }
-    }
+    private List<CategoriaDTO> listaCategoria = new();
+    private ProductoDTO modelo = new();
+    private List<string> imagenes = new();
+    private List<FiltroDTO> filtrosDisponibles = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -154,9 +147,10 @@
         if (response.EsCorrecto)
         {
             listaCategoria = (List<CategoriaDTO>)response.Resultado!;
-            if (listaCategoria.Any() && Id == 0)
+            if (Id == 0 && listaCategoria.Any())
             {
                 modelo.IdCategoria = listaCategoria.First().IdCategoria;
+                await CargarFiltrosPorCategoria();
             }
         }
     }
@@ -172,61 +166,154 @@
             if (response.EsCorrecto)
             {
                 modelo = (ProductoDTO)response.Resultado!;
-                imagenes = modelo.Imagenes.Select(img => img.RutaImagen).ToList();
-            }
-            else
-            {
-                toastService.ShowWarning(response.Mensaje);
+                imagenes = modelo.Imagenes?.Select(x => x.RutaImagen)?.ToList() ?? new();
+
+                await CargarFiltrosPorCategoria();
+
+                // Reasignar valores guardados
+                foreach (var f in filtrosDisponibles)
+                {
+                    var valorGuardado = modelo.Filtros.FirstOrDefault(x => x.IdFiltro == f.IdFiltro)?.Valor;
+
+                    if (f.EsRangoNumerico && valorGuardado?.Contains("|") == true)
+                    {
+                        var partes = valorGuardado.Split('|');
+                        f.ValorDesde = decimal.TryParse(partes[0], out var desde) ? desde : null;
+                        f.ValorHasta = decimal.TryParse(partes[1], out var hasta) ? hasta : null;
+                    }
+                    else
+                    {
+                        f.ValorUnico = valorGuardado;
+                    }
+                }
             }
         }
     }
 
-    void CambiarCategoria(ChangeEventArgs e)
+    private async Task CambiarCategoria(ChangeEventArgs e)
     {
-        modelo.IdCategoria = Convert.ToInt32(e.Value.ToString());
+        modelo.IdCategoria = int.TryParse(e.Value?.ToString(), out var id) ? id : (int?)null;
+        await CargarFiltrosPorCategoria();
     }
+
+    private async Task CargarFiltrosPorCategoria()
+    {
+        filtrosDisponibles.Clear();
+        if (modelo.IdCategoria == null)
+            return;
+
+        var nombreCategoria = listaCategoria.FirstOrDefault(c => c.IdCategoria == modelo.IdCategoria)?.Nombre;
+        if (string.IsNullOrWhiteSpace(nombreCategoria))
+            return;
+
+        var response = await productoServicio.ObtenerFiltrosPorCategoria(nombreCategoria);
+
+        if (response.EsCorrecto)
+        {
+            filtrosDisponibles = (List<FiltroDTO>)response.Resultado!;
+            StateHasChanged();
+        }
+    }
+
 
     private async Task GuardarCambios()
     {
-        bool respuesta = true;
-        string mensaje = string.Empty;
-
-        if (Id != 0)
+        // Validar filtros
+        modelo.Filtros.Clear();
+        foreach (var filtro in filtrosDisponibles)
         {
-            var response = await productoServicio.Editar(modelo);
-            if (response.EsCorrecto)
+            string valor = "";
+
+            if (filtro.EsRangoNumerico)
             {
-                mensaje = "El producto fue modificado";
+                if (filtro.ValorDesde == null || filtro.ValorHasta == null)
+                {
+                    toastService.ShowWarning($"Completá el rango de '{filtro.Nombre}'");
+                    return;
+                }
+                valor = $"{filtro.ValorDesde}|{filtro.ValorHasta}";
             }
             else
             {
-                respuesta = false;
-                mensaje = "No se pudo editar";
+                if (string.IsNullOrWhiteSpace(filtro.ValorUnico))
+                {
+                    toastService.ShowWarning($"Completá el filtro '{filtro.Nombre}'");
+                    return;
+                }
+                valor = filtro.ValorUnico!;
             }
+
+            modelo.Filtros.Add(new ProductoFiltroValorDTO
+            {
+                IdFiltro = filtro.IdFiltro,
+                Valor = valor
+            });
         }
-        else
+
+        bool resultado = false;
+        string mensaje;
+
+        if (Id == 0)
         {
             modelo.Baja = false;
             var response = await productoServicio.Crear(modelo);
-            if (response.EsCorrecto)
-            {
-                mensaje = "El producto fue creado";
-            }
-            else
-            {
-                respuesta = false;
-                mensaje = "No se pudo crear";
-            }
+            resultado = response.EsCorrecto;
+            mensaje = resultado ? "Producto creado con éxito" : "No se pudo crear el producto";
+        }
+        else
+        {
+            var response = await productoServicio.Editar(modelo);
+            resultado = response.EsCorrecto;
+            mensaje = resultado ? "Producto actualizado con éxito" : "No se pudo actualizar el producto";
         }
 
-        if (respuesta)
+        if (resultado)
         {
-            _navServicio.NavigateTo("/productos");
             toastService.ShowSuccess(mensaje);
+            _navServicio.NavigateTo("/productos");
         }
         else
         {
             toastService.ShowWarning(mensaje);
+        }
+    }
+
+    async Task Cambio(InputFileChangeEventArgs e)
+    {
+        modelo.Imagenes ??= new();
+
+        foreach (var file in e.GetMultipleFiles())
+        {
+            var fileInfo = new FileInfo(file.Name);
+            if (fileInfo.Extension.ToLower() is ".jpg" or ".png")
+            {
+                var format = $"image/{fileInfo.Extension.Replace(".", "")}";
+                var resized = await file.RequestImageFileAsync(format, 450, 300);
+                var buffer = new byte[resized.Size];
+                await resized.OpenReadStream().ReadAsync(buffer);
+                var base64 = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
+
+                imagenes.Add(base64);
+                modelo.Imagenes.Add(new ProductoImagenDTO
+                {
+                    RutaImagen = base64,
+                    NumeroImagen = modelo.Imagenes.Count + 1
+                });
+            }
+            else
+            {
+                toastService.ShowWarning("Formato inválido. Solo .jpg o .png");
+            }
+        }
+    }
+
+    void EliminarImagen(string imagen)
+    {
+        int index = imagenes.IndexOf(imagen);
+        if (index >= 0)
+        {
+            imagenes.RemoveAt(index);
+            modelo.Imagenes?.RemoveAt(index);
         }
     }
 }
