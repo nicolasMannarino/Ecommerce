@@ -72,10 +72,12 @@
             boton = "Actualizar";
 
             var response = await usuarioServicio.Obtener(Id);
-            if (response.EsCorrecto!)
+            if (response.EsCorrecto)
             {
                 modelo = (UsuarioDTO)response.Resultado!;
-                modelo.ConfirmarClave = modelo.Clave;
+                // No cargues la contraseña ni confirmacion para editar
+                modelo.Clave = string.Empty;
+                modelo.ConfirmarClave = string.Empty;
             }
             else
                 toastService.ShowWarning(response.Mensaje);
@@ -84,52 +86,54 @@
 
     private async Task GuardarCambios()
     {
-        if (modelo.Clave != modelo.ConfirmarClave)
+        if (!string.IsNullOrEmpty(modelo.Clave) || !string.IsNullOrEmpty(modelo.ConfirmarClave))
         {
-            toastService.ShowWarning("Las contrasenas no coinciden");
-            return;
+            if (modelo.Clave != modelo.ConfirmarClave)
+            {
+                toastService.ShowWarning("Las contraseñas no coinciden");
+                return;
+            }
         }
 
-        bool respuesta = true;
-        string mensaje = string.Empty;
+            bool respuesta = true;
+            string mensaje = string.Empty;
 
-        if (Id != 0)
-        {
-            var response = await usuarioServicio.Editar(modelo);
-            if (response.EsCorrecto)
+            if (Id != 0)
             {
-                mensaje = "Usuario fue modificado";
+                var response = await usuarioServicio.Editar(modelo);
+                if (response.EsCorrecto)
+                {
+                    mensaje = "Usuario fue modificado";
+                }
+                else
+                {
+                    respuesta = false;
+                    mensaje = "No pudo editar";
+                }
             }
             else
             {
-                respuesta = false;
-                mensaje = "No pudo editar";
+                modelo.Rol = "Administrador";
+                var response = await usuarioServicio.Crear(modelo);
+                if (response.EsCorrecto)
+                {
+                    mensaje = "Usuario fue creado";
+                }
+                else
+                {
+                    respuesta = false;
+                    mensaje = "No pudo crear";
+                }
             }
-        }
-        else
-        {
-            modelo.Rol = "Administrador";
-            var response = await usuarioServicio.Crear(modelo);
-            if (response.EsCorrecto)
+
+            if (respuesta)
             {
-                mensaje = "Usuario fue creado";
+                toastService.ShowSuccess(mensaje);
+                _navServicio.NavigateTo("/usuarios");
             }
             else
             {
-                respuesta = false;
-                mensaje = "No pudo crear";
+                toastService.ShowWarning(mensaje);
             }
-        }
-
-        if (respuesta)
-        {
-            toastService.ShowSuccess(mensaje);
-            _navServicio.NavigateTo("/usuarios");
-        }
-        else
-        {
-            toastService.ShowWarning(mensaje);
-        }
     }
-
 }

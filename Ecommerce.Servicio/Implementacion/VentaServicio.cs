@@ -34,10 +34,10 @@ namespace Ecommerce.Servicio.Implementacion
 
                 return _mapper.Map<VentaDTO>(ventaGenerada);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
-                throw ex;
+                throw;
             }
         }
     }

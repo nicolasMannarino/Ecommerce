@@ -95,40 +95,34 @@ namespace Ecommerce.Servicio.Implementacion
 
         public async Task<bool> Editar(UsuarioDTO modelo)
         {
-            try
+            var fromDbModelo = await _modeloRepositorio.Consultar(p => p.IdUsuario == modelo.IdUsuario)
+                                                       .FirstOrDefaultAsync();
+
+            if (fromDbModelo == null)
+                throw new Exception("Usuario no encontrado");
+
+            fromDbModelo.Nombre = modelo.Nombre;
+            fromDbModelo.Apellido = modelo.Apellido;
+            fromDbModelo.Correo = modelo.Correo;
+
+            // Actualiza la contraseña solo si se envió una nueva
+            if (!string.IsNullOrWhiteSpace(modelo.Clave))
             {
-                var consulta = _modeloRepositorio.Consultar(p => p.IdUsuario == modelo.IdUsuario);
-                var fromDbModelo = await consulta.FirstOrDefaultAsync();
+                if (modelo.Clave.Length < 8)
+                    throw new Exception("La contraseña debe tener al menos 8 caracteres");
 
-                if (fromDbModelo != null)
-                {
-                    fromDbModelo.Nombre = modelo.Nombre;
-                    fromDbModelo.Apellido = modelo.Apellido;
-                    fromDbModelo.Correo = modelo.Correo;
-
-                    // Si la contraseña cambió, volver a hashearla
-                    if (!string.IsNullOrWhiteSpace(modelo.Clave))
-                    {
-                        var hasher = new PasswordHasher<Usuario>();
-                        fromDbModelo.Clave = hasher.HashPassword(fromDbModelo, modelo.Clave);
-                    }
-
-                    var respuesta = await _modeloRepositorio.Editar(fromDbModelo);
-
-                    if (!respuesta)
-                        throw new TaskCanceledException("No se pudo editar");
-                    return respuesta;
-                }
-                else
-                {
-                    throw new TaskCanceledException("No se encontraron resultados");
-                }
+                var hasher = new PasswordHasher<Usuario>();
+                fromDbModelo.Clave = hasher.HashPassword(fromDbModelo, modelo.Clave);
             }
-            catch (Exception)
-            {
-                throw;
-            }
+
+            var respuesta = await _modeloRepositorio.Editar(fromDbModelo);
+
+            if (!respuesta)
+                throw new Exception("No se pudo editar");
+
+            return respuesta;
         }
+
 
 
         public async Task<bool> Eliminar(int id)
@@ -175,16 +169,20 @@ namespace Ecommerce.Servicio.Implementacion
         {
             try
             {
+                // Normalizar buscar para evitar nulls
+                buscar = buscar ?? "";
+
+                // Consulta base
                 var consulta = _modeloRepositorio.Consultar(p =>
-                p.Rol == rol &&
-                string.Concat(p.Nombre.ToLower(), p.Apellido.ToLower(), p.Correo.ToLower()).Contains(buscar.ToLower()));
+                    (string.IsNullOrEmpty(rol) || p.Rol == rol) &&  // filtro rol solo si no es null o vacío
+                    string.Concat(p.Nombre.ToLower(), p.Apellido.ToLower(), p.Correo.ToLower()).Contains(buscar.ToLower()));
 
                 List<UsuarioDTO> lista = _mapper.Map<List<UsuarioDTO>>(await consulta.ToListAsync());
                 return lista;
             }
             catch (Exception)
             {
-                throw; 
+                throw;
             }
         }
 

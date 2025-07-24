@@ -68,10 +68,10 @@ namespace Ecommerce.Servicio.Implementacion
                 };
                 return dto;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
-                throw ex;
+                throw;
             }
         }
     }

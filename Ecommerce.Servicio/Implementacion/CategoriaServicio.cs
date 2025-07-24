@@ -34,10 +34,10 @@ namespace Ecommerce.Servicio.Implementacion
                 else
                     throw new TaskCanceledException("No se puede crear");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
-                throw ex;
+                throw;
             }
         }
 
@@ -62,10 +62,10 @@ namespace Ecommerce.Servicio.Implementacion
                     throw new TaskCanceledException("No se encontraron resultados");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
-                throw ex;
+                throw;
             }
         }
 
@@ -88,10 +88,10 @@ namespace Ecommerce.Servicio.Implementacion
                     throw new TaskCanceledException("No se encontraron resultados");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
-                throw ex;
+                throw;
             }
         }
 
@@ -105,10 +105,10 @@ namespace Ecommerce.Servicio.Implementacion
                 List<CategoriaDTO> lista = _mapper.Map<List<CategoriaDTO>>(await consulta.ToListAsync());
                 return lista;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
-                throw ex;
+                throw;
             }
         }
 
@@ -124,10 +124,10 @@ namespace Ecommerce.Servicio.Implementacion
                 else
                     throw new TaskCanceledException("No se encontraron coincidencias");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
-                throw ex;
+                throw;
             }
         }
     }

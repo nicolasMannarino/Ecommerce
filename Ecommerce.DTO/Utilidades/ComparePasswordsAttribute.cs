@@ -21,9 +21,18 @@ namespace Ecommerce.DTO.Utilidades
         {
             var otherValue = validationContext.ObjectType
                 .GetProperty(_otherProperty)?
-                .GetValue(validationContext.ObjectInstance);
+                .GetValue(validationContext.ObjectInstance) as string;
 
-            if (!object.Equals(value, otherValue))
+            var currentValue = value as string;
+
+            // Si la propiedad "Clave" está vacía o nula, no hacemos validación de igualdad
+            if (string.IsNullOrEmpty(otherValue))
+            {
+                return ValidationResult.Success;
+            }
+
+            // Si "Clave" tiene valor, entonces confirmamos que coincidan
+            if (!object.Equals(currentValue, otherValue))
             {
                 // Asociar explícitamente el error al campo actual
                 return new ValidationResult(ErrorMessage, new[] { validationContext.MemberName! });

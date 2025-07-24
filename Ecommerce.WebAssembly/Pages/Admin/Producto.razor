@@ -169,23 +169,6 @@
                 imagenes = modelo.Imagenes?.Select(x => x.RutaImagen)?.ToList() ?? new();
 
                 await CargarFiltrosPorCategoria();
-
-                // Reasignar valores guardados
-                foreach (var f in filtrosDisponibles)
-                {
-                    var valorGuardado = modelo.Filtros.FirstOrDefault(x => x.IdFiltro == f.IdFiltro)?.Valor;
-
-                    if (f.EsRangoNumerico && valorGuardado?.Contains("|") == true)
-                    {
-                        var partes = valorGuardado.Split('|');
-                        f.ValorDesde = decimal.TryParse(partes[0], out var desde) ? desde : null;
-                        f.ValorHasta = decimal.TryParse(partes[1], out var hasta) ? hasta : null;
-                    }
-                    else
-                    {
-                        f.ValorUnico = valorGuardado;
-                    }
-                }
             }
         }
     }
@@ -211,6 +194,27 @@
         if (response.EsCorrecto)
         {
             filtrosDisponibles = (List<FiltroDTO>)response.Resultado!;
+
+            if (Id != 0 && modelo.Filtros != null)
+            {
+                // Reasignar valores guardados
+                foreach (var f in filtrosDisponibles)
+                {
+                    var valorGuardado = modelo.Filtros.FirstOrDefault(x => x.IdFiltro == f.IdFiltro)?.Valor;
+
+                    if (f.EsRangoNumerico && valorGuardado?.Contains("|") == true)
+                    {
+                        var partes = valorGuardado.Split('|');
+                        f.ValorDesde = decimal.TryParse(partes[0], out var desde) ? desde : null;
+                        f.ValorHasta = decimal.TryParse(partes[1], out var hasta) ? hasta : null;
+                    }
+                    else
+                    {
+                        f.ValorUnico = valorGuardado;
+                    }
+                }
+            }
+
             StateHasChanged();
         }
     }
