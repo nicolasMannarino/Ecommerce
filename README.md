@@ -18,11 +18,11 @@
 
 * Website: Nicolás Mannarino
 * Github: [@nicolasMannarino](https://github.com/nicolasMannarino)
-* LinkedIn: [@https:\/\/www.linkedin.com\/in\/nicolas-mannarino\/](https://linkedin.com/in/https:\/\/www.linkedin.com\/in\/nicolas-mannarino\/)
+* LinkedIn: [@nicolas-mannarino](https://www.linkedin.com/in/nicolas-mannarino/)
+
 
 ## Show your support
 
 Give a ⭐️ if this project helped you!
 
 ***
-_This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
