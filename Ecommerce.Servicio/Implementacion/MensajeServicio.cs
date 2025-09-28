@@ -1,12 +1,6 @@
 ﻿using Ecommerce.Servicio.Contrato;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using RabbitMQ.Client;
-using System.Text.Json;
-using RabbitMQ.Client.Exceptions;
+using System.Text;
 
 
 namespace Ecommerce.Servicio.Implementacion

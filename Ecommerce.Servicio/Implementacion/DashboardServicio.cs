@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Ecommerce.DTO;
 using Ecommerce.Modelo;
-using Ecommerce.DTO;
 using Ecommerce.Repositorio.Contrato;
 using Ecommerce.Servicio.Contrato;
-using AutoMapper;
 
 namespace Ecommerce.Servicio.Implementacion 
 {

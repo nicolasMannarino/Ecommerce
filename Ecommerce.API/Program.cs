@@ -19,7 +19,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<DbecommerceContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("CadenaSQL"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("EcommerceDB"));
 });
 
 builder.Services.AddTransient(typeof(IGenericoRepositorio<>), typeof(GenericoRepositorio<>));

@@ -25,14 +25,6 @@ public partial class DbecommerceContext : DbContext
     public virtual DbSet<Filtro> Filtro { get; set; }
     public virtual DbSet<FiltroOpcion> FiltroOpcion { get; set; }
 
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
-        if (!optionsBuilder.IsConfigured)
-        {
-            optionsBuilder.UseSqlServer("Server=Manna\\SQLEXPRESS; DataBase=DBEcommerce; Trusted_Connection=True; TrustServerCertificate=True;");
-        }
-    }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<FiltroOpcion>(entity =>
